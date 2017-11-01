@@ -1,6 +1,7 @@
 import com.sun.deploy.util.SystemUtils;
 import org.junit.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -112,18 +113,30 @@ public class Provider {
         driver.findElement(By.name("login")).sendKeys("provider1");
         driver.findElement(By.name("password")).sendKeys("provider1");
         driver.findElement(By.tagName("form")).submit();
-        addNewsProvider(driver);
+
+        for(int i = 1;i<21;i++){
+            addNewsProvider(driver,i);
+        }
+
     }
 
-    public void addNewsProvider(WebDriver driver) {
+    public void addNewsProvider(WebDriver driver, int i) {
+        //Scroll page to top
+        JavascriptExecutor jse = (JavascriptExecutor)driver;
+        jse.executeScript("window.scrollBy(0,250)", "");
+        // Press "news" button
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(7) > input:nth-child(1)")).click();
+        // Press "add news" button
         driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
+        // Wait for JS unwrap form for news creation
+        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        // Fill out form
         driver.findElement(By.name("title")).sendKeys("Новость");
         driver.findElement(By.name("description")).sendKeys("Описание новости Selenium");
-
-        Path photo_path = Paths.get("src/main/resources/news_photo/1.jpg");
-
+        // Set photo path
+        Path photo_path = Paths.get("src/main/resources/news_photo/"+String.valueOf(i)+".jpg");
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
+
         driver.findElement(By.tagName("form")).submit();
     }
 
