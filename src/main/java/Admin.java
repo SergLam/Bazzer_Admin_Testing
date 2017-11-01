@@ -1,4 +1,3 @@
-import com.sun.deploy.util.SystemUtils;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -13,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
-public class Provider {
+public class Admin {
 
     private static ChromeDriverService service;
     private static WebDriver driver;
@@ -47,12 +46,12 @@ public class Provider {
         }
 
         if(isLinux){
-         if(is32){
-             chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
-         }
-         if(is64){
-             chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
-         }
+            if(is32){
+                chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
+            }
+            if(is64){
+                chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
+            }
         }
 
         if(isWin){
@@ -94,14 +93,12 @@ public class Provider {
         //driver.quit();
     }
 
-
-
     @Test
-    public void LoginInProvider() throws Exception {
+    public void LoginInAdmin() throws Exception {
         driver.manage().window().maximize();
         driver.get(MainClass.BASE_URL_BOSS);
-        driver.findElement(By.name("login")).sendKeys("provider1");
-        driver.findElement(By.name("password")).sendKeys("provider1");
+        driver.findElement(By.name("login")).sendKeys("sergey");
+        driver.findElement(By.name("password")).sendKeys("sergey");
         driver.findElement(By.tagName("form")).submit();
 
         Path photo_path = Paths.get("src/main/resources/news_photo/");
@@ -114,24 +111,24 @@ public class Provider {
         }
 
         for(int i = 1;i<count;i++){
-            addNewsProvider(driver,i);
+            addNewsAdmin(driver,i);
         }
 
     }
 
-    public void addNewsProvider(WebDriver driver, int i) {
+    public void addNewsAdmin(WebDriver driver, int i) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor)driver;
         jse.executeScript("window.scrollBy(0,250)", "");
         // Press "news" button
-        driver.findElement(By.cssSelector("#left_menu > a:nth-child(7) > input:nth-child(1)")).click();
+        driver.findElement(By.cssSelector("#left_menu > a:nth-child(9) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Press "add news" button
-        driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
+        driver.findElement(By.cssSelector("#content > a:nth-child(2) > button:nth-child(1)")).click();
         // Wait for JS unwrap form for news creation
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Fill out form
-        int rand = (int)(Math.random() * (1000000 + 1));
+        int rand = (int)(Math.random() * (1000000));
 
         driver.findElement(By.name("title")).sendKeys("Новость "+String.valueOf(rand));
         driver.findElement(By.name("description")).sendKeys("Описание новости Selenium "+String.valueOf(rand));
@@ -142,14 +139,4 @@ public class Provider {
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(100, TimeUnit.MILLISECONDS);
     }
-
-//    @Test
-//    public void LoginInSeniorManager() throws Exception {
-//        driver.manage().window().maximize();
-//        driver.get(BASE_URL_MANAGER);
-//        driver.findElement(By.name("login")).sendKeys("provider2");
-//        driver.findElement(By.name("password")).sendKeys("provider2");
-//        driver.findElement(By.tagName("form")).submit();
-//    }
-
 }
