@@ -193,7 +193,7 @@ public class SeniorManager {
         Select selectTrade = new Select(selectTrademark);
         List<WebElement> all_trademarks = selectTrade.getOptions();
 
-        int rand_trademark = new Random().nextInt(all_trademarks.size());;
+        int rand_trademark = new Random().nextInt(all_trademarks.size());
 
         for(WebElement option : all_trademarks){
             if(option.getText().equals(all_trademarks.get(rand_trademark).getText())) {
@@ -231,7 +231,6 @@ public class SeniorManager {
         Path photo_path = Paths.get("src/main/resources/news_photo/"+String.valueOf(i)+".jpg");
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
-        driver.manage().timeouts().implicitlyWait(1000000000, TimeUnit.MILLISECONDS);
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 

@@ -140,7 +140,7 @@ public class Provider {
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();
-        driver.manage().timeouts().implicitlyWait(100, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
     }
 
 //    @Test
