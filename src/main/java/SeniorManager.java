@@ -1,3 +1,4 @@
+import model.TableOrderSearch;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -22,10 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 public class SeniorManager {
 
+    private TableOrderSearch searchResult;
     private static ChromeDriverService service;
     private static WebDriver driver;
 
-    public static String getChromeDriverPath(){
+    public static String getChromeDriverPath() {
 
         String os = System.getProperty("os.name").toLowerCase();
         String bytes = System.getProperty("os.arch");
@@ -39,30 +41,30 @@ public class SeniorManager {
         // Detect chrome driver directory
         String fileName = "";
         Path chromeDriverDirectory = null;
-        if(isMac || isLinux ){
+        if (isMac || isLinux) {
             chromeDriverDirectory = Paths.get("src/main/resources/chrome_driver");
         }
-        if(isWin){
+        if (isWin) {
             chromeDriverDirectory = Paths.get("src\\main\\resources\\chrome_driver");
         }
 
         String chromeDriverPath = chromeDriverDirectory.toAbsolutePath().toString();
 
         // Detect which driver to use
-        if(isMac){
+        if (isMac) {
             chromeDriverPath = chromeDriverPath.concat("/chromedriver_mac");
         }
 
-        if(isLinux){
-            if(is32){
+        if (isLinux) {
+            if (is32) {
                 chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
             }
-            if(is64){
+            if (is64) {
                 chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
             }
         }
 
-        if(isWin){
+        if (isWin) {
             chromeDriverPath = chromeDriverPath.concat("\\chromedriver.exe");
         }
 
@@ -102,7 +104,6 @@ public class SeniorManager {
     }
 
 
-
     @Test
     public void LoginInManager() throws Exception {
         driver.manage().window().maximize();
@@ -110,28 +111,73 @@ public class SeniorManager {
         driver.findElement(By.name("login")).sendKeys("provider2");
         driver.findElement(By.name("password")).sendKeys("provider2");
         driver.findElement(By.tagName("form")).submit();
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-        Path photo_path = Paths.get("src/main/resources/news_photo/");
-        File f = new File(photo_path.toAbsolutePath().toString());
-        File[] files = f.listFiles();
+//        Path photo_path = Paths.get("src/main/resources/news_photo/");
+//        File f = new File(photo_path.toAbsolutePath().toString());
+//        File[] files = f.listFiles();
+//
+//        int count = 0;
+//        if (files != null){
+//            count = files.length;
+//        }
+//
+//        goToAddGood(driver);
+//
+//        for(int i = 1;i<count;i++){
+//            addGood(driver,i);
+//        }
 
-        int count = 0;
-        if (files != null){
-            count = files.length;
+        goToOrders(driver);
+        searchResult = isUnaprover(driver);
+        while (searchResult.isUnaproved){
+            approveOrder(searchResult);
         }
 
-        goToAddGood(driver);
+    }
 
-        for(int i = 1;i<count;i++){
-            addGood(driver,i);
+    private void approveOrder(TableOrderSearch searchResult) {
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+        searchResult.details_button.click();
+        driver.findElement(By.cssSelector("#row_download > td:nth-child(1) > a:nth-child(1) > input:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        driver.get(MainClass.BASE_URL_MANAGER+"/orders/mr");
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+        this.searchResult = isUnaprover(driver);
+    }
+
+    private void goToOrders(WebDriver driver) {
+        driver.findElement(By.id("count_or")).click();
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+    }
+
+    private TableOrderSearch isUnaprover(WebDriver driver) {
+
+        TableOrderSearch result = new TableOrderSearch();
+        result.isUnaproved = false;
+
+        // Find table on web-page
+        WebElement table = driver.findElement(By.tagName("table"));
+        List<WebElement> rows_table = table.findElements(By.tagName("tr"));
+        // Calculate table rows count
+        int rows_count = rows_table.size();  // -1 cause it title row
+        // Iterate through table and search green colored rows
+        for (int i = 1; i < rows_count; i++) {
+            //System.out.println(rows_table.get(i).getAttribute("style"));
+            if (rows_table.get(i).getAttribute("style").equals("background-color: rgb(204, 255, 102);")) {
+                result.isUnaproved = true;
+                List<WebElement> cells = rows_table.get(i).findElements(By.tagName("a"));
+                WebElement button_details = cells.get(0);
+                result.details_button = button_details;
+            }
         }
 
-
+        return result;
     }
 
     public void goToAddGood(WebDriver driver) {
         //Scroll page to top
-        JavascriptExecutor jse = (JavascriptExecutor)driver;
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
         // Press "товары" button
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(5) > input:nth-child(1)")).click();
@@ -143,7 +189,7 @@ public class SeniorManager {
 
     public void addGood(WebDriver driver, int i) {
         //Scroll page to top
-        JavascriptExecutor jse = (JavascriptExecutor)driver;
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
         // Press "товары" button
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(5) > input:nth-child(1)")).click();
@@ -157,19 +203,19 @@ public class SeniorManager {
         int rand = (int) (Math.random() * (100000000 - 1)) + 1;
 
         DecimalFormat format = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.US));
-        String price =  format.format((Math.random() * (1000 - 1)) + 1);
-        String price_ref =  format.format((Math.random() * (900 - 1)) + 1);
-        String price_vip =  format.format((Math.random() * (850 - 1)) + 1);
+        String price = format.format((Math.random() * (1000 - 1)) + 1);
+        String price_ref = format.format((Math.random() * (900 - 1)) + 1);
+        String price_vip = format.format((Math.random() * (850 - 1)) + 1);
 
         System.out.println(price);
         System.out.println(price_ref);
         System.out.println(price_vip);
 
-        int quantity = (int)(Math.random() * (999 - 1)) + 1;
+        int quantity = (int) (Math.random() * (999 - 1)) + 1;
         String volume = format.format((Math.random() * (3 - 1)) + 1);
 
 
-        driver.findElement(By.name("title")).sendKeys("Товар "+String.valueOf(rand));
+        driver.findElement(By.name("title")).sendKeys("Товар " + String.valueOf(rand));
         driver.findElement(By.name("article")).sendKeys(String.valueOf(rand));
 
         driver.findElement(By.name("price")).clear();
@@ -181,7 +227,7 @@ public class SeniorManager {
         driver.findElement(By.name("price_vip")).clear();
         driver.findElement(By.name("price_vip")).sendKeys(price_vip);
 
-        driver.findElement(By.name("description")).sendKeys("Описание товара "+String.valueOf(rand));
+        driver.findElement(By.name("description")).sendKeys("Описание товара " + String.valueOf(rand));
         driver.findElement(By.name("quantity")).sendKeys(String.valueOf(quantity));
         driver.findElement(By.name("unit")).sendKeys("шт");
 
@@ -195,8 +241,8 @@ public class SeniorManager {
 
         int rand_trademark = new Random().nextInt(all_trademarks.size());
 
-        for(WebElement option : all_trademarks){
-            if(option.getText().equals(all_trademarks.get(rand_trademark).getText())) {
+        for (WebElement option : all_trademarks) {
+            if (option.getText().equals(all_trademarks.get(rand_trademark).getText())) {
                 option.click(); //select option here;
             }
         }
@@ -206,10 +252,11 @@ public class SeniorManager {
         Select selectCateg = new Select(selectCategory);
         List<WebElement> all_category = selectCateg.getOptions();
 
-        int rand_sub_category = new Random().nextInt(all_category.size());;
+        int rand_sub_category = new Random().nextInt(all_category.size());
+        ;
 
-        for(WebElement option : all_category){
-            if(option.getText().equals(all_category.get(rand_sub_category).getText())) {
+        for (WebElement option : all_category) {
+            if (option.getText().equals(all_category.get(rand_sub_category).getText())) {
                 option.click(); //select option here;
             }
         }
@@ -221,14 +268,14 @@ public class SeniorManager {
 
         int rand_country = new Random().nextInt(all_country.size());
 
-        for(WebElement option : all_country){
-            if(option.getText().equals(all_country.get(rand_country).getText())) {
+        for (WebElement option : all_country) {
+            if (option.getText().equals(all_country.get(rand_country).getText())) {
                 option.click(); //select option here;
             }
         }
 
         // Select random proto
-        Path photo_path = Paths.get("src/main/resources/news_photo/"+String.valueOf(i)+".jpg");
+        Path photo_path = Paths.get("src/main/resources/news_photo/" + String.valueOf(i) + ".jpg");
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();
