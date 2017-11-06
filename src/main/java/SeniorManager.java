@@ -113,26 +113,26 @@ public class SeniorManager {
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-//        Path photo_path = Paths.get("src/main/resources/news_photo/");
-//        File f = new File(photo_path.toAbsolutePath().toString());
-//        File[] files = f.listFiles();
-//
-//        int count = 0;
-//        if (files != null){
-//            count = files.length;
-//        }
-//
-//        goToAddGood(driver);
-//
-//        for(int i = 1;i<count;i++){
-//            addGood(driver,i);
-//        }
+        Path photo_path = Paths.get("src/main/resources/news_photo/");
+        File f = new File(photo_path.toAbsolutePath().toString());
+        File[] files = f.listFiles();
 
-        goToOrders(driver);
-        searchResult = isUnaprover(driver);
-        while (searchResult.isUnaproved){
-            approveOrder(searchResult);
+        int count = 0;
+        if (files != null){
+            count = files.length;
         }
+
+        goToAddGood(driver);
+
+        for(int i = 1;i<count;i++){
+            addGood(driver,i);
+        }
+
+//        goToOrders(driver);
+//        searchResult = isUnAprover(driver);
+//        while (searchResult.isUnaproved){
+//            approveOrder(searchResult);
+//        }
 
     }
 
@@ -143,7 +143,7 @@ public class SeniorManager {
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
         driver.get(MainClass.BASE_URL_MANAGER+"/orders/mr");
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-        this.searchResult = isUnaprover(driver);
+        this.searchResult = isUnAprover(driver);
     }
 
     private void goToOrders(WebDriver driver) {
@@ -151,7 +151,7 @@ public class SeniorManager {
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
-    private TableOrderSearch isUnaprover(WebDriver driver) {
+    private TableOrderSearch isUnAprover(WebDriver driver) {
 
         TableOrderSearch result = new TableOrderSearch();
         result.isUnaproved = false;
@@ -207,10 +207,6 @@ public class SeniorManager {
         String price_ref = format.format((Math.random() * (900 - 1)) + 1);
         String price_vip = format.format((Math.random() * (850 - 1)) + 1);
 
-        System.out.println(price);
-        System.out.println(price_ref);
-        System.out.println(price_vip);
-
         int quantity = (int) (Math.random() * (999 - 1)) + 1;
         String volume = format.format((Math.random() * (3 - 1)) + 1);
 
@@ -240,12 +236,7 @@ public class SeniorManager {
         List<WebElement> all_trademarks = selectTrade.getOptions();
 
         int rand_trademark = new Random().nextInt(all_trademarks.size());
-
-        for (WebElement option : all_trademarks) {
-            if (option.getText().equals(all_trademarks.get(rand_trademark).getText())) {
-                option.click(); //select option here;
-            }
-        }
+        all_trademarks.get(rand_trademark).click();
 
         // Select random item from dropdown list (category)
         WebElement selectCategory = driver.findElement(By.name("category"));
@@ -253,13 +244,7 @@ public class SeniorManager {
         List<WebElement> all_category = selectCateg.getOptions();
 
         int rand_sub_category = new Random().nextInt(all_category.size());
-        ;
-
-        for (WebElement option : all_category) {
-            if (option.getText().equals(all_category.get(rand_sub_category).getText())) {
-                option.click(); //select option here;
-            }
-        }
+        all_category.get(rand_sub_category).click();
 
         // Select random item from dropdown list (country)
         WebElement selectCountry = driver.findElement(By.name("country"));
@@ -267,12 +252,7 @@ public class SeniorManager {
         List<WebElement> all_country = selectCountr.getOptions();
 
         int rand_country = new Random().nextInt(all_country.size());
-
-        for (WebElement option : all_country) {
-            if (option.getText().equals(all_country.get(rand_country).getText())) {
-                option.click(); //select option here;
-            }
-        }
+        all_country.get(rand_country).click();
 
         // Select random proto
         Path photo_path = Paths.get("src/main/resources/news_photo/" + String.valueOf(i) + ".jpg");
