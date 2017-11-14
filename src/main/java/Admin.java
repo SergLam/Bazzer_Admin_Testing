@@ -10,8 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -61,56 +63,99 @@ public class Admin {
         driver.findElement(By.tagName("form")).submit();
 
         // Test for adding news by admin
-        Path news_photo_path = Paths.get("src/main/resources/news_photo/");
-        File f = new File(news_photo_path.toAbsolutePath().toString());
-        File[] files = f.listFiles();
-
+//        Path news_photo_path = Paths.get("src/main/resources/news_photo/");
+//        File f = new File(news_photo_path.toAbsolutePath().toString());
+//        File[] files = f.listFiles();
+//
 //        for (int i = 1; i < files.length; i++) {
-//            addNewsAdmin(driver, files[i].getName());
+//            addNewsAdmin(files[i].getName());
 //        }
 //
 //        for (int i = 1; i < files.length; i++) {
-//            addEventsAdmin(driver, files[i].getName());
+//            addEventsAdmin(files[i].getName());
 //        }
-
-
+//
+//
 //        Path brand_photo_path = Paths.get("src/main/resources/brands_photo/");
 //        File brand_f = new File(brand_photo_path.toAbsolutePath().toString());
 //        File[] brand_files = brand_f.listFiles();
 //
-//        goToTradeMarkPage(driver);
+//        goToTradeMarkPage();
 //
 //        for (int i = 1; i < brand_files.length; i++) {
-//            addTradeMarkAdmin(driver, brand_files[i].getName());
+//            addTradeMarkAdmin(brand_files[i].getName());
 //        }
+//
+//          goToProfessionsPage();
+//
+//          for(int i=0;i<30;i++){
+//              addProfessionAdmin();
+//          }
 
-          goToProfessionsPage(driver);
 
-          for(int i=0;i<30;i++){
-              addProfessionAdmin(driver);
-          }
+        Path news_photo_path = Paths.get("src/main/resources/news_photo/");
+        File f = new File(news_photo_path.toAbsolutePath().toString());
+        File[] files = f.listFiles();
+        ArrayList <String> provider_logins = new ArrayList<>();
+
+        for (int i = 150; i < files.length+149; i++) {
+            provider_logins.add(addProvider(i, files[i-150].getName()));
+        }
+        //provider_logins.add(addProvider(40, files[40].getName()));
+
+        // Сохранить данные в файл для дальнейшего использования
+        Path logins_path = Paths.get("output/ProviderLogins.xlsx");
+        MainClass.saveToExcelFile(logins_path.toAbsolutePath().toString(), provider_logins);
 
     }
 
-    private void addProfessionAdmin(WebDriver driver) {
+    private String addProvider(int provider_number, String file_name){
+        // Scroll page to top
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
+        jse.executeScript("window.scrollBy(0,250)", "");
+        //
+        String provider_login = "provider"+String.valueOf(provider_number);
+        // Кликнуть кнопку "поставщики" на навигационном меню
+        driver.findElement(By.cssSelector("#left_menu > a:nth-child(1) > input:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        // Кликнуть кнопку "добавить поставщика"
+        driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        // Заполняем форму
+        driver.findElement(By.name("title_firm")).sendKeys("Фирма "+String.valueOf(provider_number));
+        driver.findElement(By.id("phone")).clear();
+        driver.findElement(By.id("phone")).sendKeys("0"+String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
+        driver.findElement(By.name("mail")).sendKeys(provider_login+"@gmail.com");
+        driver.findElement(By.name("login")).sendKeys(provider_login);
+        driver.findElement(By.name("password")).sendKeys(provider_login);
+        // Добавляем фото
+        Path photo_path = Paths.get("src/main/resources/news_photo/" + file_name);
+        driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
+        // Отправляем форму
+        driver.findElement(By.tagName("form")).submit();
+        driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
+        return provider_login;
+    }
+
+    private void addProfessionAdmin() {
         driver.findElement(By.name("profession")).sendKeys("Профессия "+String.valueOf(new Random().nextInt(10000)));
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
-    private void goToProfessionsPage(WebDriver driver) {
+    private void goToProfessionsPage() {
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(11) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
 
-    private void goToTradeMarkPage(WebDriver driver) {
+    private void goToTradeMarkPage() {
         // Press "торговые марки" button
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(13) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
-    private void addTradeMarkAdmin(WebDriver driver, String file_name) {
+    private void addTradeMarkAdmin(String file_name) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
@@ -128,7 +173,7 @@ public class Admin {
 
     }
 
-    public void addNewsAdmin(WebDriver driver, String file_name) {
+    public void addNewsAdmin(String file_name) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
@@ -152,7 +197,7 @@ public class Admin {
         driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
     }
 
-    private void addEventsAdmin(WebDriver driver, String file_name) {
+    private void addEventsAdmin(String file_name) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");

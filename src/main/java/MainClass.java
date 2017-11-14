@@ -1,5 +1,16 @@
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainClass {
 
@@ -52,6 +63,77 @@ public class MainClass {
         }
 
         return chromeDriverPath;
+    }
+
+    // ONLY FOR ONE COLUMN FILES !!!
+    public static ArrayList<String> readFromExcelFile(String file_path) {
+        ArrayList<String> result = new ArrayList<>();
+        File myFile = new File(file_path);
+        try {
+            FileInputStream fis = new FileInputStream(myFile);
+            // Find file
+            XSSFWorkbook myWorkBook = new XSSFWorkbook(fis);
+            // Return first sheet
+            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+            // Get iterator to all the rows in current sheet
+            Iterator<Row> rowIterator = mySheet.iterator();
+            while (rowIterator.hasNext()){
+                Row row = rowIterator.next();
+
+                // For each row, iterate through each colums
+                Iterator<Cell> cellIterator = row.cellIterator();
+
+                while (cellIterator.hasNext()){
+                    Cell cell = cellIterator.next();
+
+                    switch (cell.getCellType()){
+                        case Cell.CELL_TYPE_STRING:
+                            result.add(cell.getStringCellValue());
+                            break;
+                            default:
+                                break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // ONLY FOR ONE COLUMN FILES!!!
+    public static void saveToExcelFile(String file_path, ArrayList<String> data){
+        File excel = new File(file_path);
+        System.out.println(file_path);
+        try {
+            FileInputStream fis = new FileInputStream(excel);
+            XSSFWorkbook book = new XSSFWorkbook(fis);
+            XSSFSheet sheet = book.getSheetAt(0);
+            int rownum = sheet.getLastRowNum();
+
+            for(String s : data){
+              Row row = sheet.createRow(rownum++);
+              int cellnum = 0;
+              Cell cell = row.createCell(cellnum++);
+              cell.setCellValue((String) s);
+            }
+            // open an OutputStream to save written data into Excel file
+            FileOutputStream os = new FileOutputStream(excel);
+            book.write(os);
+            System.out.println("Writing to excel finished");
+
+            // Close workbook, OutputStream and Excel file to prevent leak
+            os.close();
+            book.close();
+            fis.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
 }

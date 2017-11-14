@@ -74,17 +74,17 @@ public class SeniorManager {
             count = files.length;
         }
 
-        goToAddGood(driver);
+        goToAddGood();
 
         for(int i = 1;i<count;i++){
-            addGood(driver,i);
+            addGood(i);
         }
 
-//        goToOrders(driver);
-//        searchResult = isUnAprover(driver);
-//        while (searchResult.isUnaproved){
-//            approveOrder(searchResult);
-//        }
+        goToOrders();
+        searchResult = isUnApproved();
+        while (searchResult.isUnaproved){
+            approveOrder(searchResult);
+        }
 
     }
 
@@ -95,15 +95,15 @@ public class SeniorManager {
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
         driver.get(MainClass.BASE_URL_MANAGER+"/orders/mr");
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-        this.searchResult = isUnAprover(driver);
+        this.searchResult = isUnApproved();
     }
 
-    private void goToOrders(WebDriver driver) {
+    private void goToOrders() {
         driver.findElement(By.id("count_or")).click();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
-    private TableOrderSearch isUnAprover(WebDriver driver) {
+    private TableOrderSearch isUnApproved() {
 
         TableOrderSearch result = new TableOrderSearch();
         result.isUnaproved = false;
@@ -127,7 +127,7 @@ public class SeniorManager {
         return result;
     }
 
-    public void goToAddGood(WebDriver driver) {
+    public void goToAddGood() {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
@@ -139,7 +139,7 @@ public class SeniorManager {
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
     }
 
-    public void addGood(WebDriver driver, int i) {
+    public void addGood(int i) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");

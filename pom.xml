@@ -23,6 +23,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Pluggin for deal with Excel files-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.11-beta2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
