@@ -63,11 +63,11 @@ public class SeniorManager {
 
 
     @Test
-    public void LoginInManager() throws Exception {
+    public void LoginInManager() throws Throwable {
         readExcelFilesWithManagersLogins();
 
         if (list_of_excel_logins.size() > 0) {
-            for (int i = 1; i < list_of_excel_logins.size(); i++) {
+            for (int i = 2; i < list_of_excel_logins.size(); i++) {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
                     driver.manage().window().maximize();
@@ -85,7 +85,7 @@ public class SeniorManager {
 
                     goToAddGood();
                     for (int k = 1; k < files.length; k++) {
-                        addGood(k);
+                        addGood(files[k].getName());
                     }
 
                     // Добавляем младшего менеджера
@@ -222,22 +222,22 @@ public class SeniorManager {
         jse.executeScript("window.scrollBy(0,250)", "");
         // Press "товары" button
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(5) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
         // Press "новый товар" button
         driver.findElement(By.cssSelector("#menu_site > a:nth-child(3) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
     }
 
-    public void addGood(int i) {
+    public void addGood(String file_name) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
         // Press "товары" button
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(5) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
         // Press "новый товар" button
         driver.findElement(By.cssSelector("#menu_site > a:nth-child(3) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
 
         // Fill out all inputs on form
         // Артикул - МАКС - 10 символов
@@ -296,11 +296,11 @@ public class SeniorManager {
         all_country.get(rand_country).click();
 
         // Select random proto
-        Path photo_path = Paths.get("src/main/resources/news_photo/" + String.valueOf(i) + ".jpg");
+        Path photo_path = Paths.get("src/main/resources/news_photo/" + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();
-        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
     }
 
