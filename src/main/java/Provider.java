@@ -24,8 +24,9 @@ public class Provider {
 
     // Список логинов провайдеров из файла
     private static ArrayList<String> providers_login = getProvidersLogins();
+    private static ArrayList<String> senior_managers_logins = new ArrayList<>();
     // Список основных городов
-    String[] main_cities = {"Черневцы", "Чернигов", "Черкассы", "Хмельницкий", "Херсон", "Харьков", "Тернополь",
+    String[] main_cities = {"Черновцы", "Чернигов", "Черкассы", "Хмельницкий", "Херсон", "Харьков", "Тернополь",
             "Сумы", "Ровно", "Полтава", "Одесса", "Львов", "Кировоград", "Киев", "Ивано-Франковск",
             "Запорожье", "Ужгород", "Житомир", "Днепропетровск", "Луцк", "Винница"};
 
@@ -63,12 +64,17 @@ public class Provider {
     @Test
     public void LoginInProvider() throws Exception {
 
-        driver.manage().window().maximize();
-        driver.get(MainClass.BASE_URL_BOSS);
-        driver.findElement(By.name("login")).sendKeys(providers_login.get(8));
-        driver.findElement(By.name("password")).sendKeys(providers_login.get(8));
-        driver.findElement(By.tagName("form")).submit();
-        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+        for (int i = 8; i < providers_login.size(); i++) {
+
+            String provider_login = providers_login.get(i);
+
+            driver.manage().window().maximize();
+            driver.get(MainClass.BASE_URL_BOSS);
+            driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+            driver.findElement(By.name("login")).sendKeys(provider_login);
+            driver.findElement(By.name("password")).sendKeys(provider_login);
+            driver.findElement(By.tagName("form")).submit();
+            driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
 //        Path photo_path = Paths.get("src/main/resources/news_photo/");
 //        File f = new File(photo_path.toAbsolutePath().toString());
@@ -83,28 +89,38 @@ public class Provider {
 //            addNewsProvider(i);
 //        }
 
-        gotoSeniorManagerPage();
+            gotoSeniorManagerPage();
 
-        for(int i=0;i<main_cities.length;i++){
-            int city_index = new Random().nextInt(main_cities.length);
-            addSeniorManager(city_index);
+            for (int j = 0; j < main_cities.length; j++) {
+                int city_index = new Random().nextInt(main_cities.length);
+                try {
+                    addSeniorManager(city_index, provider_login);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                } finally {
+                    if (senior_managers_logins.size() > 0 && j > main_cities.length - 3) {
+                        Path logins_path = Paths.get("output/SnrMgrOf" + provider_login + ".xlsx");
+                        MainClass.saveToExcelFile(logins_path.toString(), senior_managers_logins);
+                    }
+                }
+            }
+            logoutProvider();
         }
-
     }
 
     public void gotoSeniorManagerPage() {
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(3) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
     }
 
-    public void addSeniorManager(int city_index) {
+    public void addSeniorManager(int city_index, String provider_login) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
 
         // Нажать кнопку "Добавить старшего менеджера"
         driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
 
         // Выбрать из списка городов рандомно один из главных
         // Кликнуть по выпадающему списку
@@ -115,8 +131,8 @@ public class Provider {
         driver.findElement(By.tagName("em")).click();
         // F.I.O
         driver.findElement(By.name("name")).sendKeys("Старший менеджер " + main_cities[city_index]);
-        driver.findElement(By.name("login")).sendKeys("seniormanager" + String.valueOf(city_index));
-        driver.findElement(By.name("password")).sendKeys("seniormanager" + String.valueOf(city_index));
+        driver.findElement(By.name("login")).sendKeys("snr_mgr" + String.valueOf(city_index) + provider_login);
+        driver.findElement(By.name("password")).sendKeys("snr_mgr" + String.valueOf(city_index) + provider_login);
         driver.findElement(By.id("phone")).clear();
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
         driver.findElement(By.name("information")).sendKeys("Информация о Старший менеджер " + main_cities[city_index]);
@@ -124,6 +140,7 @@ public class Provider {
         driver.findElement(By.name("is_activate")).click();
         // Submit the form
         driver.findElement(By.tagName("form")).submit();
+        senior_managers_logins.add("snr_mgr" + String.valueOf(city_index) + provider_login);
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
     }

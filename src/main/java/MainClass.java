@@ -1,5 +1,6 @@
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -104,35 +105,29 @@ public class MainClass {
 
     // ONLY FOR ONE COLUMN FILES!!!
     public static void saveToExcelFile(String file_path, ArrayList<String> data){
-        File excel = new File(file_path);
-        System.out.println(file_path);
+        XSSFWorkbook workbook = new XSSFWorkbook();
         try {
-            FileInputStream fis = new FileInputStream(excel);
-            XSSFWorkbook book = new XSSFWorkbook(fis);
-            XSSFSheet sheet = book.getSheetAt(0);
-            int rownum = sheet.getLastRowNum();
+            XSSFSheet sheet = workbook.createSheet("Logins");
+            int row_num = sheet.getLastRowNum();
 
             for(String s : data){
-              Row row = sheet.createRow(rownum++);
-              int cellnum = 0;
-              Cell cell = row.createCell(cellnum++);
+              Row row = sheet.createRow(row_num++);
+              int cell_num = 0;
+              Cell cell = row.createCell(cell_num++);
               cell.setCellValue((String) s);
             }
             // open an OutputStream to save written data into Excel file
-            FileOutputStream os = new FileOutputStream(excel);
-            book.write(os);
+            FileOutputStream os = new FileOutputStream( file_path);
+            workbook.write(os);
             System.out.println("Writing to excel finished");
 
             // Close workbook, OutputStream and Excel file to prevent leak
             os.close();
-            book.close();
-            fis.close();
+            workbook.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
 
     }
 

@@ -96,25 +96,31 @@ public class Admin {
         Path news_photo_path = Paths.get("src/main/resources/news_photo/");
         File f = new File(news_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
-        ArrayList <String> provider_logins = new ArrayList<>();
+        ArrayList<String> provider_logins = new ArrayList<>();
 
-        for (int i = 150; i < files.length+149; i++) {
-            provider_logins.add(addProvider(i, files[i-150].getName()));
+        for (int i = 250; i < files.length + 249; i++) {
+            try {
+                provider_logins.add(addProvider(i, files[i - 240].getName()));
+            } catch (Throwable t) {
+                t.printStackTrace();
+            } finally {
+                if (provider_logins.size() > 0 && i > files.length + 248) {
+                    // Сохранить данные в файл для дальнейшего использования
+                    Path logins_path = Paths.get("output/ProviderLogins.xlsx");
+                    MainClass.saveToExcelFile(logins_path.toString(), provider_logins);
+                }
+            }
+
         }
-        //provider_logins.add(addProvider(40, files[40].getName()));
-
-        // Сохранить данные в файл для дальнейшего использования
-        Path logins_path = Paths.get("output/ProviderLogins.xlsx");
-        MainClass.saveToExcelFile(logins_path.toAbsolutePath().toString(), provider_logins);
 
     }
 
-    private String addProvider(int provider_number, String file_name){
+    private String addProvider(int provider_number, String file_name) {
         // Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
         //
-        String provider_login = "provider"+String.valueOf(provider_number);
+        String provider_login = "provider" + String.valueOf(provider_number);
         // Кликнуть кнопку "поставщики" на навигационном меню
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(1) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
@@ -122,10 +128,10 @@ public class Admin {
         driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
         // Заполняем форму
-        driver.findElement(By.name("title_firm")).sendKeys("Фирма "+String.valueOf(provider_number));
+        driver.findElement(By.name("title_firm")).sendKeys("Фирма " + String.valueOf(provider_number));
         driver.findElement(By.id("phone")).clear();
-        driver.findElement(By.id("phone")).sendKeys("0"+String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
-        driver.findElement(By.name("mail")).sendKeys(provider_login+"@gmail.com");
+        driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
+        driver.findElement(By.name("mail")).sendKeys(provider_login + "@gmail.com");
         driver.findElement(By.name("login")).sendKeys(provider_login);
         driver.findElement(By.name("password")).sendKeys(provider_login);
         // Добавляем фото
@@ -138,7 +144,7 @@ public class Admin {
     }
 
     private void addProfessionAdmin() {
-        driver.findElement(By.name("profession")).sendKeys("Профессия "+String.valueOf(new Random().nextInt(10000)));
+        driver.findElement(By.name("profession")).sendKeys("Профессия " + String.valueOf(new Random().nextInt(10000)));
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
@@ -217,8 +223,8 @@ public class Admin {
 
         int event_number = new Random().nextInt(10000);
 
-        driver.findElement(By.name("title")).sendKeys("Событие "+String.valueOf(event_number));
-        driver.findElement(By.name("description")).sendKeys("Описание события "+String.valueOf(event_number));
+        driver.findElement(By.name("title")).sendKeys("Событие " + String.valueOf(event_number));
+        driver.findElement(By.name("description")).sendKeys("Описание события " + String.valueOf(event_number));
 
         // Set photo path
         Path photo_path = Paths.get("src/main/resources/news_photo/" + file_name);
@@ -235,7 +241,7 @@ public class Admin {
         long start = startDate.toEpochDay();
         System.out.println(start);
 
-        LocalDate endDate = LocalDate.of(LocalDate.now().plusYears(1).getYear(),LocalDate.now().plusYears(1).getMonth(),LocalDate.now().plusYears(1).getDayOfMonth()); //end date
+        LocalDate endDate = LocalDate.of(LocalDate.now().plusYears(1).getYear(), LocalDate.now().plusYears(1).getMonth(), LocalDate.now().plusYears(1).getDayOfMonth()); //end date
         long end = endDate.toEpochDay();
         System.out.println(start);
 

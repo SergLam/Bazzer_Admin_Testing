@@ -65,27 +65,42 @@ public class SeniorManager {
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-        Path photo_path = Paths.get("src/main/resources/news_photo/");
-        File f = new File(photo_path.toAbsolutePath().toString());
-        File[] files = f.listFiles();
+//        // Добавление товаров в рандомные категории
+//        // Кол-во товаров равно кол-ву картинок в папке
+//        Path photo_path = Paths.get("src/main/resources/news_photo/");
+//        File f = new File(photo_path.toAbsolutePath().toString());
+//        File[] files = f.listFiles();
+//
+//        goToAddGood();
+//        for(int i = 1;i<files.length;i++){
+//            addGood(i);
+//        }
+//
+//        // Подтверждаем все заказы
+//        goToOrders();
+//        searchResult = isUnApproved();
+//        while (searchResult.isUnaproved){
+//            approveOrder(searchResult);
+//        }
 
-        int count = 0;
-        if (files != null){
-            count = files.length;
-        }
+        goToAddJuniorManager();
+        addJuniorManager(10);
 
-        goToAddGood();
+    }
 
-        for(int i = 1;i<count;i++){
-            addGood(i);
-        }
+    private void addJuniorManager(int number) {
+        // Нажать кнопку "Добавить младшиго менеджера"
+        driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        // Заполняем форму
+        driver.findElement(By.name("name")).sendKeys("Младший менеджер"+String.valueOf(number));
+        driver.findElement(By.name("login")).sendKeys("juniormana");
 
-        goToOrders();
-        searchResult = isUnApproved();
-        while (searchResult.isUnaproved){
-            approveOrder(searchResult);
-        }
+    }
 
+    private void goToAddJuniorManager() {
+        driver.findElement(By.cssSelector("#left_menu > a:nth-child(3) > input:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
     }
 
     private void approveOrder(TableOrderSearch searchResult) {
