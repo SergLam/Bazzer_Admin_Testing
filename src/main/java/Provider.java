@@ -87,28 +87,30 @@ public class Provider {
 //        for(int i = 1;i<count;i++){
 //            addNewsProvider(i);
 //        }
+           // Активировать все торговые марки поставщика
+            gotoTradeMarkPage();
+            selectAllTrademarks();
 
-//            gotoTradeMarkPage();
-//            selectAllTrademarks();
+            // Создать старших менеджеров поставщика
+            gotoSeniorManagerPage();
+            for (int j = 0; j < main_cities.length; j++) {
+                int city_index = new Random().nextInt(main_cities.length);
+                try {
+                    addSeniorManager(city_index, provider_login);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                } finally {
+                    if (senior_managers_logins.size() > 0 && j > main_cities.length - 3) {
+                        Path logins_path = Paths.get("output/SnrMgrOf" + provider_login + ".xlsx");
+                        MainClass.saveToExcelFile(logins_path.toString(), senior_managers_logins);
+                    }
+                }
+            }
 
+            // Активировать торговые марки всех старших менеджеров поставщика
             gotoSeniorManagerPage();
             editSeniorManagerBrandsActivateAll();
 
-//            gotoSeniorManagerPage();
-//
-//            for (int j = 0; j < main_cities.length; j++) {
-//                int city_index = new Random().nextInt(main_cities.length);
-//                try {
-//                    addSeniorManager(city_index, provider_login);
-//                } catch (Throwable t) {
-//                    t.printStackTrace();
-//                } finally {
-//                    if (senior_managers_logins.size() > 0 && j > main_cities.length - 3) {
-//                        Path logins_path = Paths.get("output/SnrMgrOf" + provider_login + ".xlsx");
-//                        MainClass.saveToExcelFile(logins_path.toString(), senior_managers_logins);
-//                    }
-//                }
-//            }
             logoutProvider();
         }
     }

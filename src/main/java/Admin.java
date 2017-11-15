@@ -97,14 +97,14 @@ public class Admin {
         File f = new File(news_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
 
-
-        for (int i = 250; i < files.length + 249; i++) {
+        int plus = 500;
+        for (int i = plus; i < files.length + plus; i++) {
             try {
-                provider_logins.add(addProvider(i, files[i - 240].getName()));
+                provider_logins.add(addProvider(i, files[i - plus].getName()));
             } catch (Throwable t) {
                 t.printStackTrace();
             } finally {
-                if (provider_logins.size() > 0 && i > files.length + 248) {
+                if (provider_logins.size() > 0 && i > files.length + plus - 10) {
                     // Сохранить данные в файл для дальнейшего использования
                     Path logins_path = Paths.get("output/ProviderLogins.xlsx");
                     MainClass.saveToExcelFile(logins_path.toString(), provider_logins);

@@ -90,7 +90,7 @@ public class SeniorManager {
 
                     // Добавляем младшего менеджера
                     goToAddJuniorManager();
-                    for (int o = 15; o < 25; o++) {
+                    for (int o = 1; o < 5; o++) {
                         addJuniorManager(o, logins.get(j));
                     }
                     // Сохраняем логины младших менеджеров в файл

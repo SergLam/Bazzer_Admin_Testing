@@ -115,7 +115,7 @@ public class MainClass {
               cell.setCellValue((String) s);
             }
             // open an OutputStream to save written data into Excel file
-            FileOutputStream os = new FileOutputStream( file_path);
+            FileOutputStream os = new FileOutputStream(file_path);
             workbook.write(os);
             System.out.println("Writing to excel finished");
 
