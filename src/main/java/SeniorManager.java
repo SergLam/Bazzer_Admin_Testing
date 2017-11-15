@@ -67,7 +67,7 @@ public class SeniorManager {
         readExcelFilesWithManagersLogins();
 
         if (list_of_excel_logins.size() > 0) {
-            for (int i = 2; i < list_of_excel_logins.size(); i++) {
+            for (int i = 4; i < list_of_excel_logins.size(); i++) {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
                     driver.manage().window().maximize();
@@ -94,7 +94,7 @@ public class SeniorManager {
                         addJuniorManager(o, logins.get(j));
                     }
                     // Сохраняем логины младших менеджеров в файл
-                    Path logins_path = Paths.get("output/JnrMgrOfSnrMgr" + logins.get(j) + "OfProvider" + getFirmName() + ".xlsx");
+                    Path logins_path = Paths.get("output/JnrMgrOf_" + logins.get(j)+".xlsx");
                     MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
 
                     // Выходим из менеджера
