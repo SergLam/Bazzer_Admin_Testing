@@ -1,3 +1,4 @@
+import com.google.common.base.Function;
 import model.TableOrderSearch;
 import org.junit.*;
 import org.openqa.selenium.By;
@@ -8,15 +9,15 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class SeniorManager {
@@ -24,6 +25,7 @@ public class SeniorManager {
     private TableOrderSearch searchResult;
     private static ChromeDriverService service;
     private static WebDriver driver;
+    private ArrayList<ArrayList<String>> list_of_excel_logins = new ArrayList<>();
 
     @BeforeClass
     public static void createAndStartService() {
@@ -58,6 +60,23 @@ public class SeniorManager {
 
     @Test
     public void LoginInManager() throws Exception {
+//        readExcelFilesWithManagersLogins();
+//
+//        if (list_of_excel_logins.size() > 0) {
+//            for (int i = 0; i < list_of_excel_logins.size(); i++) {
+//                ArrayList<String> logins = list_of_excel_logins.get(i);
+//                for (int j = 0; j < logins.size(); j++) {
+//                    driver.manage().window().maximize();
+//                    driver.get(MainClass.BASE_URL_MANAGER);
+//                    driver.findElement(By.name("login")).sendKeys(logins.get(j));
+//                    driver.findElement(By.name("password")).sendKeys(logins.get(j));
+//                    driver.findElement(By.tagName("form")).submit();
+//                    driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+//                    logoutSeniorManager();
+//                }
+//            }
+//        }
+
         driver.manage().window().maximize();
         driver.get(MainClass.BASE_URL_MANAGER);
         driver.findElement(By.name("login")).sendKeys("provider2");
@@ -83,19 +102,62 @@ public class SeniorManager {
 //            approveOrder(searchResult);
 //        }
 
-        goToAddJuniorManager();
-        addJuniorManager(10);
+//        // Добавляем младшего менеджера
+//        goToAddJuniorManager();
+//        for(int i=12;i<20;i++){
+//            addJuniorManager(i, "provider2");
+//        }
+
+
+//        // Принимаем все заявки мастеров
+//        // ПЕРЕД АПРУВОМ ДОЛЖЕН БЫТЬ ХОТЯ БЫ ОДИН МЛАДШИЙ МЕНЕДЖЕР
+//        approveAllUsersToMaster();
 
     }
 
-    private void addJuniorManager(int number) {
+    private void approveAllUsersToMaster() {
+        // нажать кнопку "Хотят быть мастерами"
+        boolean isUnuproved = true;
+        while (isUnuproved) {
+            driver.findElement(By.id("count_bid")).click();
+            driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+            List<WebElement> listOfinputs = driver.findElements(By.tagName("input"));
+            // Проверяем если ли еще не аппрувленные заявки
+            int counter = 0;
+            int pos = 0;
+            for (int i = 0; i < listOfinputs.size(); i++) {
+                if (listOfinputs.get(i).getAttribute("value").equals("принять заявку")) {
+                    counter++;
+                    pos = i;
+                }
+            }
+            if(counter == 0){
+                isUnuproved = false;
+            } else {
+                listOfinputs.get(pos).click();
+                driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+            }
+        }
+    }
+
+
+    private void addJuniorManager(int number, String snr_mg_login) {
+        //Scroll page to top
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
+        jse.executeScript("window.scrollBy(0,250)", "");
         // Нажать кнопку "Добавить младшиго менеджера"
         driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Заполняем форму
-        driver.findElement(By.name("name")).sendKeys("Младший менеджер"+String.valueOf(number));
-        driver.findElement(By.name("login")).sendKeys("juniormana");
-
+        driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
+        driver.findElement(By.name("login")).sendKeys("juniormanager"+String.valueOf(number)+snr_mg_login);
+        driver.findElement(By.name("password")).sendKeys("juniormanager"+String.valueOf(number)+snr_mg_login);
+        driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
+        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере "+"juniormanager"+String.valueOf(number)+snr_mg_login);
+        driver.findElement(By.name("work_time")).sendKeys("Время работы "+"juniormanager"+String.valueOf(number)+snr_mg_login);
+        // Отправляем форму
+        driver.findElement(By.tagName("form")).submit();
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
     private void goToAddJuniorManager() {
@@ -108,7 +170,7 @@ public class SeniorManager {
         searchResult.details_button.click();
         driver.findElement(By.cssSelector("#row_download > td:nth-child(1) > a:nth-child(1) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
-        driver.get(MainClass.BASE_URL_MANAGER+"/orders/mr");
+        driver.get(MainClass.BASE_URL_MANAGER + "/orders/mr");
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
         this.searchResult = isUnApproved();
     }
@@ -228,5 +290,22 @@ public class SeniorManager {
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
 
+    }
+
+    private void readExcelFilesWithManagersLogins() {
+        // Read all files in directory
+        Path output_path = Paths.get("output/");
+        File f = new File(output_path.toAbsolutePath().toString());
+        File[] files = f.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].getName().contains("SnrMgrOfprovider")) {
+                list_of_excel_logins.add(MainClass.readFromExcelFile(files[i].getAbsolutePath()));
+            }
+        }
+    }
+
+    public void logoutSeniorManager() {
+        driver.findElement(By.cssSelector("#logout > a:nth-child(1) > input:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
     }
 }
