@@ -154,13 +154,14 @@ public class SeniorManager {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
+        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Нажать кнопку "Добавить младшиго менеджера"
-        driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
+        driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Заполняем форму
         driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
-        driver.findElement(By.name("login")).sendKeys("juniormanager" + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("password")).sendKeys("juniormanager" + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("login")).sendKeys("jnrmgr" + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("password")).sendKeys("jnrmgr" + String.valueOf(number) + snr_mg_login);
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
         driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + "juniormanager" + String.valueOf(number) + snr_mg_login);
         driver.findElement(By.name("work_time")).sendKeys("Время работы " + "juniormanager" + String.valueOf(number) + snr_mg_login);

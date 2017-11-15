@@ -191,8 +191,8 @@ public class Provider {
         driver.findElement(By.tagName("em")).click();
         // F.I.O
         driver.findElement(By.name("name")).sendKeys("Старший менеджер " + main_cities[city_index]);
-        driver.findElement(By.name("login")).sendKeys("snr_mgr" + String.valueOf(city_index) + provider_login);
-        driver.findElement(By.name("password")).sendKeys("snr_mgr" + String.valueOf(city_index) + provider_login);
+        driver.findElement(By.name("login")).sendKeys("snrmgr" + String.valueOf(city_index) + provider_login);
+        driver.findElement(By.name("password")).sendKeys("snrmgr" + String.valueOf(city_index) + provider_login);
         driver.findElement(By.id("phone")).clear();
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
         driver.findElement(By.name("information")).sendKeys("Информация о Старший менеджер " + main_cities[city_index]);
