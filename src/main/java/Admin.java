@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ public class Admin {
 
     private static ChromeDriverService service;
     private static WebDriver driver;
+    ArrayList<String> provider_logins = new ArrayList<>();
 
     @BeforeClass
     public static void createAndStartService() {
@@ -96,7 +96,7 @@ public class Admin {
         Path news_photo_path = Paths.get("src/main/resources/news_photo/");
         File f = new File(news_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
-        ArrayList<String> provider_logins = new ArrayList<>();
+
 
         for (int i = 250; i < files.length + 249; i++) {
             try {

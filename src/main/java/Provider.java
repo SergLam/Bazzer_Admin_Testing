@@ -6,7 +6,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +63,7 @@ public class Provider {
     @Test
     public void LoginInProvider() throws Exception {
 
-        for (int i = 8; i < providers_login.size(); i++) {
+        for (int i = 0; i < providers_login.size(); i++) {
 
             String provider_login = providers_login.get(i);
 
@@ -89,23 +88,84 @@ public class Provider {
 //            addNewsProvider(i);
 //        }
 
-            gotoSeniorManagerPage();
+//            gotoTradeMarkPage();
+//            selectAllTrademarks();
 
-            for (int j = 0; j < main_cities.length; j++) {
-                int city_index = new Random().nextInt(main_cities.length);
-                try {
-                    addSeniorManager(city_index, provider_login);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                } finally {
-                    if (senior_managers_logins.size() > 0 && j > main_cities.length - 3) {
-                        Path logins_path = Paths.get("output/SnrMgrOf" + provider_login + ".xlsx");
-                        MainClass.saveToExcelFile(logins_path.toString(), senior_managers_logins);
-                    }
-                }
-            }
+            gotoSeniorManagerPage();
+            editSeniorManagerBrandsActivateAll();
+
+//            gotoSeniorManagerPage();
+//
+//            for (int j = 0; j < main_cities.length; j++) {
+//                int city_index = new Random().nextInt(main_cities.length);
+//                try {
+//                    addSeniorManager(city_index, provider_login);
+//                } catch (Throwable t) {
+//                    t.printStackTrace();
+//                } finally {
+//                    if (senior_managers_logins.size() > 0 && j > main_cities.length - 3) {
+//                        Path logins_path = Paths.get("output/SnrMgrOf" + provider_login + ".xlsx");
+//                        MainClass.saveToExcelFile(logins_path.toString(), senior_managers_logins);
+//                    }
+//                }
+//            }
             logoutProvider();
         }
+    }
+
+    private void editSeniorManagerBrandsActivateAll() {
+        // Ищем все кнопки с именем "торговые марки"
+        List<WebElement> inputs = driver.findElements(By.tagName("input"));
+        for (int i = 0; i < inputs.size(); i++) {
+            // Если на кнопке написано "торговые марки" и она не слева
+            if (inputs.get(i).getAttribute("value").equals("торговые марки") && inputs.get(i).getLocation().x > 500) {
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", inputs.get(i));
+                driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+                // Найти таблицу
+                WebElement table = driver.findElement(By.tagName("table"));
+                // Найти все строки таблицы
+                List<WebElement> tableRows = table.findElements(By.tagName("tr"));
+                for (int j = 1; j < tableRows.size(); j++) {
+                    // Найти секции в строке
+                    List<WebElement> tableDiv = tableRows.get(j).findElements(By.tagName("td"));
+                    // В первой секции - там чек-бокс
+                    List<WebElement> check_box = tableDiv.get(0).findElements(By.tagName("input"));
+                    // Найти и кликнуть на все чек-боксы
+                    for (WebElement check : check_box) {
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", check);
+
+                    }
+                }
+                // Вернуться на прошлую страницу
+                ((JavascriptExecutor) driver).executeScript("window.history.go(-1)");
+                inputs = driver.findElements(By.tagName("input"));
+            } else {
+
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+    private void gotoTradeMarkPage() {
+        // Нажать кнопку "торговые марки" в навигационной панели
+        driver.findElement(By.cssSelector("#left_menu > a:nth-child(5) > input:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+    }
+
+    private void selectAllTrademarks() {
+        // Кликнуть в поле для разворачивания списка
+        driver.findElement(By.cssSelector(".ms-options-wrap > button:nth-child(1)")).click();
+        // Кликнуть на "select all"
+        driver.findElement(By.xpath("/html/body/div[6]/div/form/div/div/a")).click();
+        // Нажать на "сохранить"
+        driver.findElement(By.cssSelector("#content > div:nth-child(1) > form:nth-child(1) > input:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
     public void gotoSeniorManagerPage() {
@@ -176,6 +236,6 @@ public class Provider {
 
     public void logoutProvider() {
         driver.findElement(By.cssSelector("#logout > a:nth-child(1) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 }

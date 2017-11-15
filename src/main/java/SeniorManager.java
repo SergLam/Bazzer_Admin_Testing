@@ -1,4 +1,3 @@
-import com.google.common.base.Function;
 import model.TableOrderSearch;
 import org.junit.*;
 import org.openqa.selenium.By;
@@ -9,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +15,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class SeniorManager {
@@ -25,7 +26,10 @@ public class SeniorManager {
     private TableOrderSearch searchResult;
     private static ChromeDriverService service;
     private static WebDriver driver;
+    // Логины старших менеджеров
     private ArrayList<ArrayList<String>> list_of_excel_logins = new ArrayList<>();
+    // Массив для сохранения логинов младших менеджеров
+    private ArrayList<String> juniorManagers_logins = new ArrayList<>();
 
     @BeforeClass
     public static void createAndStartService() {
@@ -60,52 +64,57 @@ public class SeniorManager {
 
     @Test
     public void LoginInManager() throws Exception {
-//        readExcelFilesWithManagersLogins();
-//
-//        if (list_of_excel_logins.size() > 0) {
-//            for (int i = 0; i < list_of_excel_logins.size(); i++) {
-//                ArrayList<String> logins = list_of_excel_logins.get(i);
-//                for (int j = 0; j < logins.size(); j++) {
-//                    driver.manage().window().maximize();
-//                    driver.get(MainClass.BASE_URL_MANAGER);
-//                    driver.findElement(By.name("login")).sendKeys(logins.get(j));
-//                    driver.findElement(By.name("password")).sendKeys(logins.get(j));
-//                    driver.findElement(By.tagName("form")).submit();
-//                    driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-//                    logoutSeniorManager();
-//                }
-//            }
-//        }
+        readExcelFilesWithManagersLogins();
 
-        driver.manage().window().maximize();
-        driver.get(MainClass.BASE_URL_MANAGER);
-        driver.findElement(By.name("login")).sendKeys("provider2");
-        driver.findElement(By.name("password")).sendKeys("provider2");
-        driver.findElement(By.tagName("form")).submit();
-        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+        if (list_of_excel_logins.size() > 0) {
+            for (int i = 1; i < list_of_excel_logins.size(); i++) {
+                ArrayList<String> logins = list_of_excel_logins.get(i);
+                for (int j = 0; j < logins.size(); j++) {
+                    driver.manage().window().maximize();
+                    driver.get(MainClass.BASE_URL_MANAGER);
+                    driver.findElement(By.name("login")).sendKeys(logins.get(j));
+                    driver.findElement(By.name("password")).sendKeys(logins.get(j));
+                    driver.findElement(By.tagName("form")).submit();
+                    driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-//        // Добавление товаров в рандомные категории
-//        // Кол-во товаров равно кол-ву картинок в папке
-//        Path photo_path = Paths.get("src/main/resources/news_photo/");
-//        File f = new File(photo_path.toAbsolutePath().toString());
-//        File[] files = f.listFiles();
-//
-//        goToAddGood();
-//        for(int i = 1;i<files.length;i++){
-//            addGood(i);
-//        }
-//
+                    // Добавление товаров в рандомные категории
+                    // Кол-во товаров равно кол-ву картинок в папке
+                    Path photo_path = Paths.get("src/main/resources/news_photo/");
+                    File f = new File(photo_path.toAbsolutePath().toString());
+                    File[] files = f.listFiles();
+
+                    goToAddGood();
+                    for (int k = 1; k < files.length; k++) {
+                        addGood(k);
+                    }
+
+                    // Добавляем младшего менеджера
+                    goToAddJuniorManager();
+                    for (int o = 15; o < 25; o++) {
+                        addJuniorManager(o, logins.get(j));
+                    }
+                    // Сохраняем логины младших менеджеров в файл
+                    Path logins_path = Paths.get("output/JnrMgrOfSnrMgr" + logins.get(j) + "OfProvider" + getFirmName() + ".xlsx");
+                    MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
+
+                    // Выходим из менеджера
+                    logoutSeniorManager();
+                }
+            }
+        }
+
+//        driver.manage().window().maximize();
+//        driver.get(MainClass.BASE_URL_MANAGER);
+//        driver.findElement(By.name("login")).sendKeys("provider2");
+//        driver.findElement(By.name("password")).sendKeys("provider2");
+//        driver.findElement(By.tagName("form")).submit();
+//        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+
 //        // Подтверждаем все заказы
 //        goToOrders();
 //        searchResult = isUnApproved();
 //        while (searchResult.isUnaproved){
 //            approveOrder(searchResult);
-//        }
-
-//        // Добавляем младшего менеджера
-//        goToAddJuniorManager();
-//        for(int i=12;i<20;i++){
-//            addJuniorManager(i, "provider2");
 //        }
 
 
@@ -131,7 +140,7 @@ public class SeniorManager {
                     pos = i;
                 }
             }
-            if(counter == 0){
+            if (counter == 0) {
                 isUnuproved = false;
             } else {
                 listOfinputs.get(pos).click();
@@ -150,13 +159,16 @@ public class SeniorManager {
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Заполняем форму
         driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
-        driver.findElement(By.name("login")).sendKeys("juniormanager"+String.valueOf(number)+snr_mg_login);
-        driver.findElement(By.name("password")).sendKeys("juniormanager"+String.valueOf(number)+snr_mg_login);
+        driver.findElement(By.name("login")).sendKeys("juniormanager" + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("password")).sendKeys("juniormanager" + String.valueOf(number) + snr_mg_login);
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
-        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере "+"juniormanager"+String.valueOf(number)+snr_mg_login);
-        driver.findElement(By.name("work_time")).sendKeys("Время работы "+"juniormanager"+String.valueOf(number)+snr_mg_login);
+        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + "juniormanager" + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("work_time")).sendKeys("Время работы " + "juniormanager" + String.valueOf(number) + snr_mg_login);
         // Отправляем форму
         driver.findElement(By.tagName("form")).submit();
+        // Заносим логин в массив
+        juniorManagers_logins.add("juniormanager" + String.valueOf(number) + snr_mg_login);
+        // Ждем
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
@@ -307,5 +319,12 @@ public class SeniorManager {
     public void logoutSeniorManager() {
         driver.findElement(By.cssSelector("#logout > a:nth-child(1) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
+    }
+
+    public String getFirmName() {
+        String title = driver.findElement(By.cssSelector("#menu_site > font:nth-child(1)")).getText();
+        String[] arr = title.split(" название фирмы ");
+        System.out.println(arr[1]);
+        return arr[1];
     }
 }
