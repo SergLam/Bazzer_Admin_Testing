@@ -44,7 +44,7 @@ public class Provider {
 
     @AfterClass
     public static void createAndStopService() {
-        //service.stop();
+        service.stop();
     }
 
     @Before
@@ -56,7 +56,7 @@ public class Provider {
 
     @After
     public void quitDriver() {
-        //driver.quit();
+        driver.quit();
     }
 
 

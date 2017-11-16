@@ -46,7 +46,7 @@ public class SeniorManager {
 
     @AfterClass
     public static void createAndStopService() {
-        //service.stop();
+        service.stop();
     }
 
     @Before
@@ -58,7 +58,7 @@ public class SeniorManager {
 
     @After
     public void quitDriver() {
-        //driver.quit();
+        driver.quit();
     }
 
 

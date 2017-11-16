@@ -39,7 +39,7 @@ public class Admin {
 
     @AfterClass
     public static void createAndStopService() {
-        //service.stop();
+        service.stop();
     }
 
     @Before
@@ -51,7 +51,7 @@ public class Admin {
 
     @After
     public void quitDriver() {
-        //driver.quit();
+        driver.quit();
     }
 
     @Test
@@ -97,7 +97,7 @@ public class Admin {
         File f = new File(news_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
 
-        int plus = 500;
+        int plus = 600;
         for (int i = plus; i < files.length + plus; i++) {
             try {
                 provider_logins.add(addProvider(i, files[i - plus].getName()));
