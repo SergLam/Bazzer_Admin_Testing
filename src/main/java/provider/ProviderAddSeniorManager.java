@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class Provider {
+public class ProviderAddSeniorManager {
 
     private static ChromeDriverService service;
     private static WebDriver driver;

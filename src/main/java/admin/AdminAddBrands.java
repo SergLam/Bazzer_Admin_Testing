@@ -54,8 +54,8 @@ public class AdminAddBrands {
     @Test
     public void LoginInAdmin() throws Exception {
         driver.get(MainClass.BASE_URL_BOSS);
-        driver.findElement(By.name("login")).sendKeys("sergey");
-        driver.findElement(By.name("password")).sendKeys("sergey");
+        driver.findElement(By.name("login")).sendKeys(MainClass.ADMIN_LOGIN);
+        driver.findElement(By.name("password")).sendKeys(MainClass.ADMIN_PASSWORD);
         driver.findElement(By.tagName("form")).submit();
 
         // Test for adding trademarks by admin

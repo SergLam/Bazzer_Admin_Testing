@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.junit.runner.JUnitCore;
-import provider.Provider;
+import provider.ProviderAddSeniorManager;
 import seniormanager.SeniorManager;
 
 import java.io.File;
@@ -55,7 +55,7 @@ public class MainClass {
     public static void main(String args[]) {
         JUnitCore junit = new JUnitCore();
         junit.run(AdminAddProvider.class);
-        junit.run(Provider.class);
+        junit.run(ProviderAddSeniorManager.class);
         junit.run(SeniorManager.class);
     }
 
