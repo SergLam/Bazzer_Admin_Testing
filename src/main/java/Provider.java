@@ -224,7 +224,7 @@ public class Provider {
         driver.findElement(By.name("title")).sendKeys("Новость " + String.valueOf(rand));
         driver.findElement(By.name("description")).sendKeys("Описание новости Selenium " + String.valueOf(rand));
         // Set photo path
-        Path photo_path = Paths.get("src/main/resources/news_photo/" + String.valueOf(i) + ".jpg");
+        Path photo_path = Paths.get(MainClass.NEWS_PHOTO_PATH + String.valueOf(i) + ".jpg");
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();

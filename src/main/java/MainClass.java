@@ -3,6 +3,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.junit.runner.RunWith;
+import org.junit.runner.JUnitCore;
+import org.junit.internal.TextListener;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,8 +20,25 @@ public class MainClass {
     public static final String BASE_URL_BOSS = "http://178.159.110.21:84";
     public static final String BASE_URL_MANAGER = "http://178.159.110.21:83";
 
-    public static void main(String[] args) {
+    // Driver path
+    private static final String CHROME_DRIVER_PATH_UNIX = "src/main/resources/chrome_driver";
+    private static final String CHROME_DRIVER_PATH_WIN = "src\\main\\resources\\chrome_driver";
+    // Driver files
+    private static final String CHROME_DRIVER_MAC = "/chromedriver_mac";
+    private static final String CHROME_DRIVER_LINUX_32 = "/chromedriver_linux32";
+    private static final String CHROME_DRIVER_LINUX_64 = "/chromedriver_linux64";
+    private static final String CHROME_DRIVER_WIN = "\\chromedriver.exe";
+    // Photo folders path
+    public static final String BRAND_PHOTO_PATH = "src/main/resources/brands_photo/";
+    public static final String GOODS_PHOTO_PATH = "src/main/resources/goods_photo/";
+    public static final String NEWS_PHOTO_PATH = "src/main/resources/news_photo/";
+    public static final String PROFILE_PHOTO_PATH = "src/main/resources/profile_photo/";
 
+    public static void main(String args[]) {
+        JUnitCore junit = new JUnitCore();
+        junit.run(Admin.class);
+        junit.run(Provider.class);
+        junit.run(SeniorManager.class);
     }
 
     public static String getChromeDriverPath() {
@@ -35,30 +56,30 @@ public class MainClass {
         String fileName = "";
         Path chromeDriverDirectory = null;
         if (isMac || isLinux) {
-            chromeDriverDirectory = Paths.get("src/main/resources/chrome_driver");
+            chromeDriverDirectory = Paths.get(CHROME_DRIVER_PATH_UNIX);
         }
         if (isWin) {
-            chromeDriverDirectory = Paths.get("src\\main\\resources\\chrome_driver");
+            chromeDriverDirectory = Paths.get(CHROME_DRIVER_PATH_WIN);
         }
 
         String chromeDriverPath = chromeDriverDirectory.toAbsolutePath().toString();
 
         // Detect which driver to use
         if (isMac) {
-            chromeDriverPath = chromeDriverPath.concat("/chromedriver_mac");
+            chromeDriverPath = chromeDriverPath.concat(CHROME_DRIVER_MAC);
         }
 
         if (isLinux) {
             if (is32) {
-                chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
+                chromeDriverPath = chromeDriverPath.concat(CHROME_DRIVER_LINUX_32);
             }
             if (is64) {
-                chromeDriverPath = chromeDriverPath.concat("/chromedriver_linux32");
+                chromeDriverPath = chromeDriverPath.concat(CHROME_DRIVER_LINUX_64);
             }
         }
 
         if (isWin) {
-            chromeDriverPath = chromeDriverPath.concat("\\chromedriver.exe");
+            chromeDriverPath = chromeDriverPath.concat(CHROME_DRIVER_WIN);
         }
 
         return chromeDriverPath;
@@ -117,7 +138,6 @@ public class MainClass {
             // open an OutputStream to save written data into Excel file
             FileOutputStream os = new FileOutputStream(file_path);
             workbook.write(os);
-            System.out.println("Writing to excel finished");
 
             // Close workbook, OutputStream and Excel file to prevent leak
             os.close();

@@ -1,3 +1,4 @@
+
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -93,18 +94,18 @@ public class Admin {
 //          }
 
 
-        Path news_photo_path = Paths.get("src/main/resources/profile_photo/");
-        File f = new File(news_photo_path.toAbsolutePath().toString());
+        Path profile_photo_path = Paths.get(MainClass.PROFILE_PHOTO_PATH);
+        File f = new File(profile_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
 
-        int plus = 600;
-        for (int i = plus; i < files.length + plus; i++) {
+        int plus = 1000;
+        for (int i = 1 + plus; i < files.length + plus; i++) {
             try {
-                provider_logins.add(addProvider(i, files[i - plus].getName()));
+                provider_logins.add(addProvider(i, files[i-plus].getName()));
             } catch (Throwable t) {
                 t.printStackTrace();
             } finally {
-                if (provider_logins.size() > 0 && i > files.length + plus - 10) {
+                if (provider_logins.size() > 0 && i > files.length - 2 + plus) {
                     // Сохранить данные в файл для дальнейшего использования
                     Path logins_path = Paths.get("output/ProviderLogins.xlsx");
                     MainClass.saveToExcelFile(logins_path.toString(), provider_logins);
@@ -135,7 +136,7 @@ public class Admin {
         driver.findElement(By.name("login")).sendKeys(provider_login);
         driver.findElement(By.name("password")).sendKeys(provider_login);
         // Добавляем фото
-        Path photo_path = Paths.get("src/main/resources/news_photo/" + file_name);
+        Path photo_path = Paths.get("src/main/resources/profile_photo/" + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
         // Отправляем форму
         driver.findElement(By.tagName("form")).submit();
@@ -172,7 +173,7 @@ public class Admin {
         driver.findElement(By.id("trade")).sendKeys(file_name);
         driver.findElement(By.id("desc")).sendKeys("Описание торговой марки " + file_name);
 
-        Path photo_path = Paths.get("src/main/resources/brands_photo/" + file_name);
+        Path photo_path = Paths.get(MainClass.BRAND_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
         driver.findElement(By.tagName("form")).submit();
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
@@ -196,7 +197,7 @@ public class Admin {
         driver.findElement(By.name("title")).sendKeys("Новость " + String.valueOf(rand));
         driver.findElement(By.name("description")).sendKeys("Описание новости Selenium " + String.valueOf(rand));
         // Set photo path
-        Path photo_path = Paths.get("src/main/resources/news_photo/" + file_name);
+        Path photo_path = Paths.get(MainClass.NEWS_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();
@@ -227,7 +228,7 @@ public class Admin {
         driver.findElement(By.name("description")).sendKeys("Описание события " + String.valueOf(event_number));
 
         // Set photo path
-        Path photo_path = Paths.get("src/main/resources/news_photo/" + file_name);
+        Path photo_path = Paths.get(MainClass.NEWS_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();

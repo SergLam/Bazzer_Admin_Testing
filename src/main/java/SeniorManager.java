@@ -8,6 +8,7 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.Select;
+import sun.applet.Main;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class SeniorManager {
 
                     // Добавление товаров в рандомные категории
                     // Кол-во товаров равно кол-ву картинок в папке
-                    Path photo_path = Paths.get("src/main/resources/goods_photo/");
+                    Path photo_path = Paths.get(MainClass.GOODS_PHOTO_PATH);
                     File f = new File(photo_path.toAbsolutePath().toString());
                     File[] files = f.listFiles();
 
@@ -297,7 +298,7 @@ public class SeniorManager {
         all_country.get(rand_country).click();
 
         // Select random proto
-        Path photo_path = Paths.get("src/main/resources/goods_photo/" + file_name);
+        Path photo_path = Paths.get(MainClass.GOODS_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();
