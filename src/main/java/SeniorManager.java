@@ -71,35 +71,39 @@ public class SeniorManager {
             for (int i = 0; i < list_of_excel_logins.size(); i++) {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
-                    driver.manage().window().maximize();
-                    driver.get(MainClass.BASE_URL_MANAGER);
-                    driver.findElement(By.name("login")).sendKeys(logins.get(j));
-                    driver.findElement(By.name("password")).sendKeys(logins.get(j));
-                    driver.findElement(By.tagName("form")).submit();
-                    driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+                    try{
+                        driver.manage().window().maximize();
+                        driver.get(MainClass.BASE_URL_MANAGER);
+                        driver.findElement(By.name("login")).sendKeys(logins.get(j));
+                        driver.findElement(By.name("password")).sendKeys(logins.get(j));
+                        driver.findElement(By.tagName("form")).submit();
+                        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-                    // Добавление товаров в рандомные категории
-                    // Кол-во товаров равно кол-ву картинок в папке
-                    Path photo_path = Paths.get(MainClass.GOODS_PHOTO_PATH);
-                    File f = new File(photo_path.toAbsolutePath().toString());
-                    File[] files = f.listFiles();
+                        // Добавление товаров в рандомные категории
+                        // Кол-во товаров равно кол-ву картинок в папке
+                        Path photo_path = Paths.get(MainClass.GOODS_PHOTO_PATH);
+                        File f = new File(photo_path.toAbsolutePath().toString());
+                        File[] files = f.listFiles();
 
-                    goToAddGood();
-                    for (int k = 1; k < files.length; k++) {
-                        addGood(files[k].getName());
+                        goToAddGood();
+                        for (int k = 1; k < files.length; k++) {
+                            addGood(files[k].getName());
+                        }
+
+                        // Добавляем младшего менеджера
+                        goToAddJuniorManager();
+                        for (int o = 1; o < 5; o++) {
+                            addJuniorManager(o, logins.get(j));
+                        }
+                        // Сохраняем логины младших менеджеров в файл
+                        Path logins_path = Paths.get("output/JnrMgrOf_" + logins.get(j)+".xlsx");
+                        MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
+
+                        // Выходим из менеджера
+                        logoutSeniorManager();
+                    } catch (Throwable t){
+                        t.printStackTrace();
                     }
-
-                    // Добавляем младшего менеджера
-                    goToAddJuniorManager();
-                    for (int o = 1; o < 5; o++) {
-                        addJuniorManager(o, logins.get(j));
-                    }
-                    // Сохраняем логины младших менеджеров в файл
-                    Path logins_path = Paths.get("output/JnrMgrOf_" + logins.get(j)+".xlsx");
-                    MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
-
-                    // Выходим из менеджера
-                    logoutSeniorManager();
                 }
             }
         }
