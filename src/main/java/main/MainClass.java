@@ -14,7 +14,10 @@ import provider.ProviderActivateSnrMgrTrademarks;
 import provider.ProviderActivateTrademarks;
 import provider.ProviderAddNews;
 import provider.ProviderAddSeniorManager;
+import seniormanager.SeniorManagerAddGoods;
 import seniormanager.SeniorManagerAddJuniorManager;
+import seniormanager.SeniorManagerApproveOrders;
+import seniormanager.SeniorManagerApproveUsers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,7 +80,11 @@ public class MainClass {
 //        junit.run(ProviderAddNews.class);
 
         // Senior manager functions test
-        junit.run(SeniorManagerAddJuniorManager.class);
+//        junit.run(SeniorManagerAddJuniorManager.class);
+//        junit.run(SeniorManagerAddGoods.class);
+//        junit.run(SeniorManagerApproveUsers.class);
+//        junit.run(SeniorManagerApproveOrders.class);
+
     }
 
     public static String getChromeDriverPath() {

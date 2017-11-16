@@ -4,8 +4,8 @@ import main.MainClass;
 import model.TableOrderSearch;
 import org.junit.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -15,18 +15,16 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class SeniorManagerAddJuniorManager {
+public class SeniorManagerApproveUsers {
 
     private TableOrderSearch searchResult;
     private static ChromeDriverService service;
     private static WebDriver driver;
     // Логины старших менеджеров
     private ArrayList<ArrayList<String>> list_of_excel_logins = new ArrayList<>();
-    // Массив для сохранения логинов младших менеджеров
-    private ArrayList<String> juniorManagers_logins = new ArrayList<>();
 
     @BeforeClass
     public static void createAndStartService() {
@@ -58,6 +56,7 @@ public class SeniorManagerAddJuniorManager {
         driver.quit();
     }
 
+
     @Test
     public void LoginInManager() throws Throwable {
         readExcelFilesWithManagersLogins();
@@ -73,16 +72,9 @@ public class SeniorManagerAddJuniorManager {
                         driver.findElement(By.tagName("form")).submit();
                         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-                        // Добавляем младшего менеджера
-                        goToAddJuniorManager();
-                        for (int o = 1; o < 5; o++) {
-                            addJuniorManager(o, logins.get(j));
-                        }
-
-                        // Сохраняем логины младших менеджеров в файл
-                        Path logins_path = Paths.get(MainClass.JUNIOR_MANAGER_FILE_PATH + logins.get(j)+MainClass.EXCEL_FILE_EXTENSION);
-                        MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
-                        juniorManagers_logins.clear();
+                        // Принимаем все заявки мастеров
+                        // ПЕРЕД АПРУВОМ ДОЛЖЕН БЫТЬ ХОТЯ БЫ ОДИН МЛАДШИЙ МЕНЕДЖЕР
+                        approveAllUsersToMaster();
 
                         // Выходим из менеджера
                         logoutSeniorManager();
@@ -95,32 +87,29 @@ public class SeniorManagerAddJuniorManager {
 
     }
 
-    private void addJuniorManager(int number, String snr_mg_login) {
-        //Scroll page to top
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        jse.executeScript("window.scrollBy(0,250)", "");
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-        // Нажать кнопку "Добавить младшиго менеджера"
-        driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-        // Заполняем форму
-        driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
-        driver.findElement(By.name("login")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("password")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
-        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("work_time")).sendKeys("Время работы " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        // Отправляем форму
-        driver.findElement(By.tagName("form")).submit();
-        // Заносим логин в массив
-        juniorManagers_logins.add(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        // Ждем
-        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-    }
-
-    private void goToAddJuniorManager() {
-        driver.findElement(By.cssSelector("#left_menu > a:nth-child(3) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+    private void approveAllUsersToMaster() {
+        // нажать кнопку "Хотят быть мастерами"
+        boolean isUnuproved = true;
+        while (isUnuproved) {
+            driver.findElement(By.id("count_bid")).click();
+            driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+            List<WebElement> listOfinputs = driver.findElements(By.tagName("input"));
+            // Проверяем если ли еще не аппрувленные заявки
+            int counter = 0;
+            int pos = 0;
+            for (int i = 0; i < listOfinputs.size(); i++) {
+                if (listOfinputs.get(i).getAttribute("value").equals("принять заявку")) {
+                    counter++;
+                    pos = i;
+                }
+            }
+            if (counter == 0) {
+                isUnuproved = false;
+            } else {
+                listOfinputs.get(pos).click();
+                driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+            }
+        }
     }
 
     private void readExcelFilesWithManagersLogins() {

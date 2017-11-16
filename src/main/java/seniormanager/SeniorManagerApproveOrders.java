@@ -4,8 +4,8 @@ import main.MainClass;
 import model.TableOrderSearch;
 import org.junit.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -15,18 +15,16 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class SeniorManagerAddJuniorManager {
+public class SeniorManagerApproveOrders {
 
     private TableOrderSearch searchResult;
     private static ChromeDriverService service;
     private static WebDriver driver;
     // Логины старших менеджеров
     private ArrayList<ArrayList<String>> list_of_excel_logins = new ArrayList<>();
-    // Массив для сохранения логинов младших менеджеров
-    private ArrayList<String> juniorManagers_logins = new ArrayList<>();
 
     @BeforeClass
     public static void createAndStartService() {
@@ -58,6 +56,7 @@ public class SeniorManagerAddJuniorManager {
         driver.quit();
     }
 
+
     @Test
     public void LoginInManager() throws Throwable {
         readExcelFilesWithManagersLogins();
@@ -73,16 +72,12 @@ public class SeniorManagerAddJuniorManager {
                         driver.findElement(By.tagName("form")).submit();
                         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-                        // Добавляем младшего менеджера
-                        goToAddJuniorManager();
-                        for (int o = 1; o < 5; o++) {
-                            addJuniorManager(o, logins.get(j));
+                        // Подтверждаем все заказы
+                        goToOrders();
+                        searchResult = isUnApproved();
+                        while (searchResult.isUnaproved){
+                            approveOrder(searchResult);
                         }
-
-                        // Сохраняем логины младших менеджеров в файл
-                        Path logins_path = Paths.get(MainClass.JUNIOR_MANAGER_FILE_PATH + logins.get(j)+MainClass.EXCEL_FILE_EXTENSION);
-                        MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
-                        juniorManagers_logins.clear();
 
                         // Выходим из менеджера
                         logoutSeniorManager();
@@ -92,35 +87,45 @@ public class SeniorManagerAddJuniorManager {
                 }
             }
         }
-
     }
 
-    private void addJuniorManager(int number, String snr_mg_login) {
-        //Scroll page to top
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        jse.executeScript("window.scrollBy(0,250)", "");
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-        // Нажать кнопку "Добавить младшиго менеджера"
-        driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-        // Заполняем форму
-        driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
-        driver.findElement(By.name("login")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("password")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
-        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("work_time")).sendKeys("Время работы " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        // Отправляем форму
-        driver.findElement(By.tagName("form")).submit();
-        // Заносим логин в массив
-        juniorManagers_logins.add(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        // Ждем
+    private void approveOrder(TableOrderSearch searchResult) {
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+        searchResult.details_button.click();
+        driver.findElement(By.cssSelector("#row_download > td:nth-child(1) > a:nth-child(1) > input:nth-child(1)")).click();
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        driver.get(MainClass.BASE_URL_MANAGER + "/orders/mr");
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+        this.searchResult = isUnApproved();
+    }
+
+    private void goToOrders() {
+        driver.findElement(By.id("count_or")).click();
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
 
-    private void goToAddJuniorManager() {
-        driver.findElement(By.cssSelector("#left_menu > a:nth-child(3) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+    private TableOrderSearch isUnApproved() {
+
+        TableOrderSearch result = new TableOrderSearch();
+        result.isUnaproved = false;
+
+        // Find table on web-page
+        WebElement table = driver.findElement(By.tagName("table"));
+        List<WebElement> rows_table = table.findElements(By.tagName("tr"));
+        // Calculate table rows count
+        int rows_count = rows_table.size();  // -1 cause it title row
+        // Iterate through table and search green colored rows
+        for (int i = 1; i < rows_count; i++) {
+            //System.out.println(rows_table.get(i).getAttribute("style"));
+            if (rows_table.get(i).getAttribute("style").equals("background-color: rgb(204, 255, 102);")) {
+                result.isUnaproved = true;
+                List<WebElement> cells = rows_table.get(i).findElements(By.tagName("a"));
+                WebElement button_details = cells.get(0);
+                result.details_button = button_details;
+            }
+        }
+
+        return result;
     }
 
     private void readExcelFilesWithManagersLogins() {
@@ -138,6 +143,13 @@ public class SeniorManagerAddJuniorManager {
     public void logoutSeniorManager() {
         driver.findElement(By.cssSelector("#logout > a:nth-child(1) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
+    }
+
+    public String getFirmName() {
+        String title = driver.findElement(By.cssSelector("#menu_site > font:nth-child(1)")).getText();
+        String[] arr = title.split(" название фирмы ");
+        System.out.println(arr[1]);
+        return arr[1];
     }
 
 }
