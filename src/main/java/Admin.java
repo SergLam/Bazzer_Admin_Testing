@@ -93,7 +93,7 @@ public class Admin {
 //          }
 
 
-        Path news_photo_path = Paths.get("src/main/resources/news_photo/");
+        Path news_photo_path = Paths.get("src/main/resources/profile_photo/");
         File f = new File(news_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
 

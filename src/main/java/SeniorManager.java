@@ -67,7 +67,7 @@ public class SeniorManager {
         readExcelFilesWithManagersLogins();
 
         if (list_of_excel_logins.size() > 0) {
-            for (int i = 4; i < list_of_excel_logins.size(); i++) {
+            for (int i = 0; i < list_of_excel_logins.size(); i++) {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
                     driver.manage().window().maximize();
@@ -79,7 +79,7 @@ public class SeniorManager {
 
                     // Добавление товаров в рандомные категории
                     // Кол-во товаров равно кол-ву картинок в папке
-                    Path photo_path = Paths.get("src/main/resources/news_photo/");
+                    Path photo_path = Paths.get("src/main/resources/goods_photo/");
                     File f = new File(photo_path.toAbsolutePath().toString());
                     File[] files = f.listFiles();
 
@@ -297,7 +297,7 @@ public class SeniorManager {
         all_country.get(rand_country).click();
 
         // Select random proto
-        Path photo_path = Paths.get("src/main/resources/news_photo/" + file_name);
+        Path photo_path = Paths.get("src/main/resources/goods_photo/" + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();
