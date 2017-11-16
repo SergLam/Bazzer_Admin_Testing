@@ -6,6 +6,7 @@ import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -75,8 +76,19 @@ public class SeniorManagerAddJuniorManager {
 
                         // Добавляем младшего менеджера
                         goToAddJuniorManager();
-                        for (int o = 1; o < 5; o++) {
-                            addJuniorManager(o, logins.get(j));
+                        for (int o = 58; o < 60; o++) {
+                            String login = addJuniorManager(o, logins.get(j));
+                            try {
+                                // Проверяем, нет ли сообщения о том, что логин существует
+                                WebElement login_exists = driver.findElement(By.xpath("/html/body/div[6]/p"));
+                                if(login_exists.isDisplayed()){
+
+                                } else {
+                                    juniorManagers_logins.add(login);
+                                }
+                            } catch (Throwable t){
+                                t.printStackTrace();
+                            }
                         }
 
                         // Сохраняем логины младших менеджеров в файл
@@ -95,7 +107,7 @@ public class SeniorManagerAddJuniorManager {
 
     }
 
-    private void addJuniorManager(int number, String snr_mg_login) {
+    private String addJuniorManager(int number, String snr_mg_login) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
@@ -112,10 +124,10 @@ public class SeniorManagerAddJuniorManager {
         driver.findElement(By.name("work_time")).sendKeys("Время работы " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
         // Отправляем форму
         driver.findElement(By.tagName("form")).submit();
-        // Заносим логин в массив
-        juniorManagers_logins.add(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
         // Ждем
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+        String juniormanager_login = MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login;
+        return juniormanager_login;
     }
 
     private void goToAddJuniorManager() {
