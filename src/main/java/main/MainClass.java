@@ -14,10 +14,7 @@ import provider.ProviderActivateSnrMgrTrademarks;
 import provider.ProviderActivateTrademarks;
 import provider.ProviderAddNews;
 import provider.ProviderAddSeniorManager;
-import seniormanager.SeniorManagerAddGoods;
-import seniormanager.SeniorManagerAddJuniorManager;
-import seniormanager.SeniorManagerApproveOrders;
-import seniormanager.SeniorManagerApproveUsers;
+import seniormanager.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,6 +81,7 @@ public class MainClass {
 //        junit.run(SeniorManagerAddGoods.class);
 //        junit.run(SeniorManagerApproveUsers.class);
 //        junit.run(SeniorManagerApproveOrders.class);
+//        junit.run(SeniorManagerAddNews.class);
 
     }
 
@@ -143,21 +141,21 @@ public class MainClass {
             XSSFSheet mySheet = myWorkBook.getSheetAt(0);
             // Get iterator to all the rows in current sheet
             Iterator<Row> rowIterator = mySheet.iterator();
-            while (rowIterator.hasNext()){
+            while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
 
                 // For each row, iterate through each colums
                 Iterator<Cell> cellIterator = row.cellIterator();
 
-                while (cellIterator.hasNext()){
+                while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
 
-                    switch (cell.getCellType()){
+                    switch (cell.getCellType()) {
                         case Cell.CELL_TYPE_STRING:
                             result.add(cell.getStringCellValue());
                             break;
-                            default:
-                                break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -169,17 +167,17 @@ public class MainClass {
     }
 
     // ONLY FOR ONE COLUMN FILES!!!
-    public static void saveToExcelFile(String file_path, ArrayList<String> data){
+    public static void saveToExcelFile(String file_path, ArrayList<String> data) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         try {
             XSSFSheet sheet = workbook.createSheet("Logins");
             int row_num = sheet.getLastRowNum();
 
-            for(String s : data){
-              Row row = sheet.createRow(row_num++);
-              int cell_num = 0;
-              Cell cell = row.createCell(cell_num++);
-              cell.setCellValue((String) s);
+            for (String s : data) {
+                Row row = sheet.createRow(row_num++);
+                int cell_num = 0;
+                Cell cell = row.createCell(cell_num++);
+                cell.setCellValue((String) s);
             }
             // open an OutputStream to save written data into Excel file
             FileOutputStream os = new FileOutputStream(file_path);

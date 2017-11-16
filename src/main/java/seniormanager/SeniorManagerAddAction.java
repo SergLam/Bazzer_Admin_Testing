@@ -13,12 +13,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class SeniorManagerAddNews {
+public class SeniorManagerAddAction {
 
     private static ChromeDriverService service;
     private static WebDriver driver;
@@ -40,7 +43,7 @@ public class SeniorManagerAddNews {
 
     @AfterClass
     public static void createAndStopService() {
-        service.stop();
+        //service.stop();
     }
 
     @Before
@@ -52,7 +55,7 @@ public class SeniorManagerAddNews {
 
     @After
     public void quitDriver() {
-       driver.quit();
+        // driver.quit();
     }
 
 
@@ -77,7 +80,7 @@ public class SeniorManagerAddNews {
 
                         for(int k=1;k<files.length;k++){
                             // Add news by seniormanager
-                            addNews(logins.get(j), files[k].getName());
+                            addAction(logins.get(j), files[k].getName());
                         }
 
                         // Выходим из менеджера
@@ -96,18 +99,21 @@ public class SeniorManagerAddNews {
 //        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 //
 //        // Add news by seniormanager
-//        addNews("provider2", files[1].getName());
+//        for (int i = 0; i < files.length; i++) {
+//            addAction("provider2", files[i].getName());
+//        }
+
 
     }
 
-    private void addNews(String mng_log, String file_name) {
+    private void addAction(String mng_log, String file_name) {
         // Нажать кнопку "Новости" в навигационной панели
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(9) > input:nth-child(1)")).click();
         // Нажать кнопку "добавить новость"
         driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Нажать радиобаттон "новость"
-        driver.findElement(By.id("news")).click();
+        driver.findElement(By.id("share")).click();
         // Найти форму - в дальнейшем искать элементы на ней
         WebElement table = driver.findElement(By.tagName("form"));
 
@@ -115,10 +121,19 @@ public class SeniorManagerAddNews {
         int num = new Random().nextInt(1000);
 
         List<WebElement> inputs = table.findElements(By.tagName("input"));
+
+        String start_date = generateRandomDate();
+
         for (WebElement element : inputs) {
             String name = element.getAttribute("name");
+            if (name.equals("date_start")) {
+                element.sendKeys(start_date);
+            }
+            if (name.equals("date_end")) {
+                element.sendKeys(datePlusMounth(start_date));
+            }
             if (name.equals("title")) {
-                element.sendKeys("Новость от " + mng_log + " " + String.valueOf(num));
+                element.sendKeys("Акция от " + mng_log + " " + String.valueOf(num));
             }
             if (name.equals("file")) {
                 Path photo_path = Paths.get(MainClass.NEWS_PHOTO_PATH + file_name);
@@ -130,7 +145,7 @@ public class SeniorManagerAddNews {
         for (WebElement element : textareas) {
             String name = element.getAttribute("name");
             if (name.equals("description")) {
-                element.sendKeys("Описание новости от " + mng_log + " " + String.valueOf(num));
+                element.sendKeys("Описание акции от " + mng_log + " " + String.valueOf(num));
             }
         }
 
@@ -153,6 +168,41 @@ public class SeniorManagerAddNews {
     public void logoutSeniorManager() {
         driver.findElement(By.cssSelector("#logout > a:nth-child(1) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
+    }
+
+    private String generateRandomDate() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+        LocalDate startDate = LocalDate.now(); // start date
+        long start = startDate.toEpochDay();
+
+        LocalDate endDate = LocalDate.of(LocalDate.now().plusYears(1).getYear(), LocalDate.now().plusYears(1).getMonth(), LocalDate.now().plusYears(1).getDayOfMonth()); //end date
+        long end = endDate.toEpochDay();
+
+        long randomEpochDay = ThreadLocalRandom.current().longs(start, end).findAny().getAsLong();
+
+        String date = LocalDate.ofEpochDay(randomEpochDay).format(dtf);
+
+        return date;
+    }
+
+    private String datePlusMounth(String date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        String result = "";
+        try {
+            Date date1 = formatter.parse(date);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date1);
+            calendar.add(Calendar.MONTH, 1);
+
+            Date newDate = calendar.getTime();
+
+            result = new SimpleDateFormat("dd.MM.yyyy").format(newDate);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }
