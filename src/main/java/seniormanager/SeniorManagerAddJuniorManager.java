@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class SeniorManager {
+public class SeniorManagerAddJuniorManager {
 
     private TableOrderSearch searchResult;
     private static ChromeDriverService service;

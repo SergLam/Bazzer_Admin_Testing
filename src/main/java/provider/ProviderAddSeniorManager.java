@@ -5,7 +5,6 @@ import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -77,22 +75,6 @@ public class ProviderAddSeniorManager {
             driver.findElement(By.tagName("form")).submit();
             driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-//        Path photo_path = Paths.get("src/main/resources/news_photo/");
-//        File f = new File(photo_path.toAbsolutePath().toString());
-//        File[] files = f.listFiles();
-//
-//        int count = 0;
-//        if (files != null){
-//            count = files.length;
-//        }
-//
-//        for(int i = 1;i<count;i++){
-//            addNewsProvider(i);
-//        }
-           // Активировать все торговые марки поставщика
-            gotoTradeMarkPage();
-            selectAllTrademarks();
-
             // Создать старших менеджеров поставщика
             gotoSeniorManagerPage();
             for (int j = 0; j < main_cities.length; j++) {
@@ -109,68 +91,10 @@ public class ProviderAddSeniorManager {
                 }
             }
 
-            // Активировать торговые марки всех старших менеджеров поставщика
-            gotoSeniorManagerPage();
-            editSeniorManagerBrandsActivateAll();
-
             logoutProvider();
         }
     }
 
-    private void editSeniorManagerBrandsActivateAll() {
-        // Ищем все кнопки с именем "торговые марки"
-        List<WebElement> inputs = driver.findElements(By.tagName("input"));
-        for (int i = 0; i < inputs.size(); i++) {
-            // Если на кнопке написано "торговые марки" и она не слева
-            if (inputs.get(i).getAttribute("value").equals("торговые марки") && inputs.get(i).getLocation().x > 500) {
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", inputs.get(i));
-                driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-                // Найти таблицу
-                WebElement table = driver.findElement(By.tagName("table"));
-                // Найти все строки таблицы
-                List<WebElement> tableRows = table.findElements(By.tagName("tr"));
-                for (int j = 1; j < tableRows.size(); j++) {
-                    // Найти секции в строке
-                    List<WebElement> tableDiv = tableRows.get(j).findElements(By.tagName("td"));
-                    // В первой секции - там чек-бокс
-                    List<WebElement> check_box = tableDiv.get(0).findElements(By.tagName("input"));
-                    // Найти и кликнуть на все чек-боксы
-                    for (WebElement check : check_box) {
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", check);
-
-                    }
-                }
-                // Вернуться на прошлую страницу
-                ((JavascriptExecutor) driver).executeScript("window.history.go(-1)");
-                inputs = driver.findElements(By.tagName("input"));
-            } else {
-
-            }
-        }
-    }
-
-
-
-
-
-
-
-
-    private void gotoTradeMarkPage() {
-        // Нажать кнопку "торговые марки" в навигационной панели
-        driver.findElement(By.cssSelector("#left_menu > a:nth-child(5) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-    }
-
-    private void selectAllTrademarks() {
-        // Кликнуть в поле для разворачивания списка
-        driver.findElement(By.cssSelector(".ms-options-wrap > button:nth-child(1)")).click();
-        // Кликнуть на "select all"
-        driver.findElement(By.xpath("/html/body/div[6]/div/form/div/div/a")).click();
-        // Нажать на "сохранить"
-        driver.findElement(By.cssSelector("#content > div:nth-child(1) > form:nth-child(1) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-    }
 
     public void gotoSeniorManagerPage() {
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(3) > input:nth-child(1)")).click();
@@ -208,30 +132,6 @@ public class ProviderAddSeniorManager {
         senior_managers_logins.add(MANAGER_LOGIN);
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 
-    }
-
-    public void addNewsProvider(int i) {
-        //Scroll page to top
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        jse.executeScript("window.scrollBy(0,250)", "");
-        // Press "news" button
-        driver.findElement(By.cssSelector("#left_menu > a:nth-child(7) > input:nth-child(1)")).click();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-        // Press "add news" button
-        driver.findElement(By.cssSelector("#content > a:nth-child(1) > button:nth-child(1)")).click();
-        // Wait for JS unwrap form for news creation
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-        // Fill out form
-        int rand = (int) (Math.random() * (1000000 + 1));
-
-        driver.findElement(By.name("title")).sendKeys("Новость " + String.valueOf(rand));
-        driver.findElement(By.name("description")).sendKeys("Описание новости Selenium " + String.valueOf(rand));
-        // Set photo path
-        Path photo_path = Paths.get(MainClass.NEWS_PHOTO_PATH + String.valueOf(i) + ".jpg");
-        driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
-
-        driver.findElement(By.tagName("form")).submit();
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
     }
 
     public static ArrayList<String> getProvidersLogins() {

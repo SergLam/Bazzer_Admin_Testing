@@ -1,5 +1,8 @@
 package main;
 
+import admin.AdminAddBrands;
+import admin.AdminAddNews;
+import admin.AdminAddProfession;
 import admin.AdminAddProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -7,8 +10,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.junit.runner.JUnitCore;
+import provider.ProviderActivateSnrMgrTrademarks;
+import provider.ProviderActivateTrademarks;
+import provider.ProviderAddNews;
 import provider.ProviderAddSeniorManager;
-import seniormanager.SeniorManager;
+import seniormanager.SeniorManagerAddJuniorManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,9 +60,24 @@ public class MainClass {
 
     public static void main(String args[]) {
         JUnitCore junit = new JUnitCore();
-        junit.run(AdminAddProvider.class);
-        junit.run(ProviderAddSeniorManager.class);
-        junit.run(SeniorManager.class);
+        // Admin functions test
+//        junit.run(AdminAddBrands.class);
+//        junit.run(AdminAddProfession.class);
+//
+//        junit.run(AdminAddProvider.class);
+//
+//        junit.run(AdminAddNews.class);
+
+
+        // Provider functions test
+//        junit.run(ProviderActivateTrademarks.class);
+//        junit.run(ProviderAddSeniorManager.class);
+//        junit.run(ProviderActivateSnrMgrTrademarks.class);
+//
+//        junit.run(ProviderAddNews.class);
+
+        // Senior manager functions test
+        junit.run(SeniorManagerAddJuniorManager.class);
     }
 
     public static String getChromeDriverPath() {
