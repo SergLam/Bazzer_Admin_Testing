@@ -1,4 +1,6 @@
+package admin;
 
+import main.MainClass;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -18,7 +20,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class Admin {
+public class AdminAddProvider {
 
     private static ChromeDriverService service;
     private static WebDriver driver;
@@ -57,7 +59,6 @@ public class Admin {
 
     @Test
     public void LoginInAdmin() throws Exception {
-        driver.manage().window().maximize();
         driver.get(MainClass.BASE_URL_BOSS);
         driver.findElement(By.name("login")).sendKeys("sergey");
         driver.findElement(By.name("password")).sendKeys("sergey");
@@ -107,7 +108,7 @@ public class Admin {
             } finally {
                 if (provider_logins.size() > 0 && i > files.length - 2 + plus) {
                     // Сохранить данные в файл для дальнейшего использования
-                    Path logins_path = Paths.get("output/ProviderLogins.xlsx");
+                    Path logins_path = Paths.get(MainClass.PROVIDERS_FILE_PATH);
                     MainClass.saveToExcelFile(logins_path.toString(), provider_logins);
                 }
             }
@@ -121,7 +122,7 @@ public class Admin {
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
         //
-        String provider_login = "provider" + String.valueOf(provider_number);
+        String provider_login = MainClass.PROVIDER_LOGIN + String.valueOf(provider_number);
         // Кликнуть кнопку "поставщики" на навигационном меню
         driver.findElement(By.cssSelector("#left_menu > a:nth-child(1) > input:nth-child(1)")).click();
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
@@ -132,11 +133,11 @@ public class Admin {
         driver.findElement(By.name("title_firm")).sendKeys("Фирма " + String.valueOf(provider_number));
         driver.findElement(By.id("phone")).clear();
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
-        driver.findElement(By.name("mail")).sendKeys(provider_login + "@gmail.com");
-        driver.findElement(By.name("login")).sendKeys(provider_login);
-        driver.findElement(By.name("password")).sendKeys(provider_login);
+        driver.findElement(By.name("mail")).sendKeys(MainClass.PROVIDER_LOGIN + "@gmail.com");
+        driver.findElement(By.name("login")).sendKeys(MainClass.PROVIDER_LOGIN);
+        driver.findElement(By.name("password")).sendKeys(MainClass.PROVIDER_LOGIN);
         // Добавляем фото
-        Path photo_path = Paths.get("src/main/resources/profile_photo/" + file_name);
+        Path photo_path = Paths.get(MainClass.PROFILE_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
         // Отправляем форму
         driver.findElement(By.tagName("form")).submit();

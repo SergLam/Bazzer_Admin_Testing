@@ -1,3 +1,6 @@
+package seniormanager;
+
+import main.MainClass;
 import model.TableOrderSearch;
 import org.junit.*;
 import org.openqa.selenium.By;
@@ -8,7 +11,6 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.Select;
-import sun.applet.Main;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +74,6 @@ public class SeniorManager {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
                     try{
-                        driver.manage().window().maximize();
                         driver.get(MainClass.BASE_URL_MANAGER);
                         driver.findElement(By.name("login")).sendKeys(logins.get(j));
                         driver.findElement(By.name("password")).sendKeys(logins.get(j));
@@ -95,9 +96,11 @@ public class SeniorManager {
                         for (int o = 1; o < 5; o++) {
                             addJuniorManager(o, logins.get(j));
                         }
+
                         // Сохраняем логины младших менеджеров в файл
-                        Path logins_path = Paths.get("output/JnrMgrOf_" + logins.get(j)+".xlsx");
+                        Path logins_path = Paths.get(MainClass.JUNIOR_MANAGER_FILE_PATH + logins.get(j)+MainClass.EXCEL_FILE_EXTENSION);
                         MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
+                        juniorManagers_logins.clear();
 
                         // Выходим из менеджера
                         logoutSeniorManager();
@@ -109,7 +112,7 @@ public class SeniorManager {
         }
 
 //        driver.manage().window().maximize();
-//        driver.get(MainClass.BASE_URL_MANAGER);
+//        driver.get(main.MainClass.BASE_URL_MANAGER);
 //        driver.findElement(By.name("login")).sendKeys("provider2");
 //        driver.findElement(By.name("password")).sendKeys("provider2");
 //        driver.findElement(By.tagName("form")).submit();
@@ -165,15 +168,15 @@ public class SeniorManager {
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Заполняем форму
         driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
-        driver.findElement(By.name("login")).sendKeys("jnrmgr" + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("password")).sendKeys("jnrmgr" + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("login")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("password")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
-        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + "juniormanager" + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("work_time")).sendKeys("Время работы " + "juniormanager" + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("work_time")).sendKeys("Время работы " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
         // Отправляем форму
         driver.findElement(By.tagName("form")).submit();
         // Заносим логин в массив
-        juniorManagers_logins.add("juniormanager" + String.valueOf(number) + snr_mg_login);
+        juniorManagers_logins.add(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
         // Ждем
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
     }
@@ -312,11 +315,11 @@ public class SeniorManager {
 
     private void readExcelFilesWithManagersLogins() {
         // Read all files in directory
-        Path output_path = Paths.get("output/");
+        Path output_path = Paths.get(MainClass.OUTPUT_FOLDER);
         File f = new File(output_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
         for (int i = 0; i < files.length; i++) {
-            if (files[i].getName().contains("SnrMgrOfprovider")) {
+            if (files[i].getName().contains(MainClass.SENIOR_MANAGER_FILE_NAME)) {
                 list_of_excel_logins.add(MainClass.readFromExcelFile(files[i].getAbsolutePath()));
             }
         }

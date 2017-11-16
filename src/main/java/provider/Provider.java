@@ -1,3 +1,6 @@
+package provider;
+
+import main.MainClass;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -67,7 +70,6 @@ public class Provider {
 
             String provider_login = providers_login.get(i);
 
-            driver.manage().window().maximize();
             driver.get(MainClass.BASE_URL_BOSS);
             driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
             driver.findElement(By.name("login")).sendKeys(provider_login);
@@ -101,7 +103,7 @@ public class Provider {
                     t.printStackTrace();
                 } finally {
                     if (senior_managers_logins.size() > 0 && j > main_cities.length - 3) {
-                        Path logins_path = Paths.get("output/SnrMgrOf" + provider_login + ".xlsx");
+                        Path logins_path = Paths.get(MainClass.SENIOR_MANAGER_FILE_PATH + provider_login + MainClass.EXCEL_FILE_EXTENSION);
                         MainClass.saveToExcelFile(logins_path.toString(), senior_managers_logins);
                     }
                 }
@@ -192,7 +194,7 @@ public class Provider {
         // Поиск выдает нужный город - делаем по нему клик
         driver.findElement(By.tagName("em")).click();
         // F.I.O
-        String MANAGER_LOGIN = "snrmgr" + String.valueOf(city_index) + provider_login;
+        String MANAGER_LOGIN = MainClass.SENIOR_MANAGER_LOGIN + String.valueOf(city_index) + provider_login;
         driver.findElement(By.name("name")).sendKeys("Старший менеджер " + main_cities[city_index]);
         driver.findElement(By.name("login")).sendKeys(MANAGER_LOGIN);
         driver.findElement(By.name("password")).sendKeys(MANAGER_LOGIN);
@@ -233,7 +235,7 @@ public class Provider {
     }
 
     public static ArrayList<String> getProvidersLogins() {
-        Path logins_path = Paths.get("output/ProviderLogins.xlsx");
+        Path logins_path = Paths.get(MainClass.PROVIDERS_FILE_PATH);
         return MainClass.readFromExcelFile(logins_path.toAbsolutePath().toString());
     }
 

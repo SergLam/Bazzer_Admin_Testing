@@ -1,11 +1,14 @@
+package main;
+
+import admin.AdminAddProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.junit.runner.RunWith;
 import org.junit.runner.JUnitCore;
-import org.junit.internal.TextListener;
+import provider.Provider;
+import seniormanager.SeniorManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,10 +36,25 @@ public class MainClass {
     public static final String GOODS_PHOTO_PATH = "src/main/resources/goods_photo/";
     public static final String NEWS_PHOTO_PATH = "src/main/resources/news_photo/";
     public static final String PROFILE_PHOTO_PATH = "src/main/resources/profile_photo/";
+    // Logins templates
+    public static final String PROVIDER_LOGIN = "provider";
+    public static final String SENIOR_MANAGER_LOGIN = "snrmgr";
+    public static final String JUNIOR_MANAGER_LOGIN = "jnrmgr";
+    // Excel documents names
+    public static final String EXCEL_FILE_EXTENSION = ".xlsx";
+    public static final String OUTPUT_FOLDER = "output/";
+    public static final String PROVIDERS_FILE_PATH = "output/ProviderLogins.xlsx";
+    public static final String SENIOR_MANAGER_FILE_PATH = "output/SnrMgrOf";
+    public static final String SENIOR_MANAGER_FILE_NAME = "SnrMgrOf";
+    public static final String JUNIOR_MANAGER_FILE_PATH = "output/JnrMgrOf_";
+    // SUPER-ADMIN LOGIN AND PASSWORD
+    public static final String ADMIN_LOGIN = "sergey";
+    public static final String ADMIN_PASSWORD = "sergey";
+
 
     public static void main(String args[]) {
         JUnitCore junit = new JUnitCore();
-        junit.run(Admin.class);
+        junit.run(AdminAddProvider.class);
         junit.run(Provider.class);
         junit.run(SeniorManager.class);
     }
