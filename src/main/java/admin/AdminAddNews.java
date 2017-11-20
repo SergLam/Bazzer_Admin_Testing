@@ -136,11 +136,9 @@ public class AdminAddNews {
 
         LocalDate startDate = LocalDate.now(); // start date
         long start = startDate.toEpochDay();
-        System.out.println(start);
 
         LocalDate endDate = LocalDate.of(LocalDate.now().plusYears(1).getYear(), LocalDate.now().plusYears(1).getMonth(), LocalDate.now().plusYears(1).getDayOfMonth()); //end date
         long end = endDate.toEpochDay();
-        System.out.println(start);
 
         long randomEpochDay = ThreadLocalRandom.current().longs(start, end).findAny().getAsLong();
 

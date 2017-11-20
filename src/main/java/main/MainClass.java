@@ -61,12 +61,12 @@ public class MainClass {
     public static void main(String args[]) {
         JUnitCore junit = new JUnitCore();
 //         Admin functions test
-//        junit.run(AdminAddBrands.class);
+//        junit.run(AdminAddBrands.class); - bugs on prod
 //        junit.run(AdminAddProfession.class);
 //
-        junit.run(AdminAddProvider.class);
+//        junit.run(AdminAddProvider.class);
 //
-//        junit.run(AdminAddNews.class);
+        junit.run(AdminAddNews.class);
 
 
         // Provider functions test
