@@ -77,6 +77,7 @@ public class AdminAddProvider {
                     // Сохранить данные в файл для дальнейшего использования
                     Path logins_path = Paths.get(MainClass.PROVIDERS_FILE_PATH);
                     MainClass.saveToExcelFile(logins_path.toString(), provider_logins);
+                    provider_logins.clear();
                 }
             }
 

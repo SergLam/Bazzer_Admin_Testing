@@ -70,7 +70,7 @@ public class SeniorManagerAddGoods {
         readExcelFilesWithManagersLogins();
 
         if (list_of_excel_logins.size() > 0) {
-            for (int i = 0; i < list_of_excel_logins.size(); i++) {
+            for (int i = 3; i < list_of_excel_logins.size(); i++) {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
                     try{

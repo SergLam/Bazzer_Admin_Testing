@@ -77,8 +77,8 @@ public class MainClass {
 //        junit.run(ProviderAddNews.class);
 
         // Senior manager functions test
-        junit.run(SeniorManagerAddJuniorManager.class);
-//        junit.run(SeniorManagerAddGoods.class);
+//        junit.run(SeniorManagerAddJuniorManager.class);
+        junit.run(SeniorManagerAddGoods.class);
 //        junit.run(SeniorManagerApproveUsers.class);
 //        junit.run(SeniorManagerApproveOrders.class);
 //        junit.run(SeniorManagerAddNews.class);
