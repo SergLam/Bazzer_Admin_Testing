@@ -66,7 +66,7 @@ public class AdminAddProvider {
         File f = new File(profile_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
 
-        int plus = 10;
+        int plus = 20;
         for (int i = 1 + plus; i < files.length + plus; i++) {
             try {
                 provider_logins.add(addProvider(i, files[i - plus].getName()));

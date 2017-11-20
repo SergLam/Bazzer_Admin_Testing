@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class AdminAddBrands {
@@ -65,7 +66,7 @@ public class AdminAddBrands {
 
         goToTradeMarkPage();
 
-        for (int i = 1; i < brand_files.length; i++) {
+        for (int i = 1; i < 2/*brand_files.length*/; i++) {
             addTradeMarkAdmin(brand_files[i].getName());
         }
     }
@@ -84,13 +85,15 @@ public class AdminAddBrands {
         driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
         driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
         // Insert data in form fields
-        driver.findElement(By.id("trade")).sendKeys(file_name);
-        driver.findElement(By.id("desc")).sendKeys("Описание торговой марки " + file_name);
+        String[] arr = file_name.split("\\.");
+        String brand_name = arr[0];
+        driver.findElement(By.id("trade")).sendKeys(brand_name);
+        driver.findElement(By.id("desc")).sendKeys("Описание торговой марки " + brand_name);
 
         Path photo_path = Paths.get(MainClass.BRAND_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
-        driver.findElement(By.tagName("form")).submit();
-        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        //driver.findElement(By.tagName("form")).submit();
+        //driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
 
     }
 
