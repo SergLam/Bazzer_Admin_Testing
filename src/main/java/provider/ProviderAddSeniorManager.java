@@ -78,7 +78,7 @@ public class ProviderAddSeniorManager {
             // Создать старших менеджеров поставщика
             gotoSeniorManagerPage();
             for (int j = 0; j < main_cities.length; j++) {
-                int city_index = new Random().nextInt(main_cities.length);
+                int city_index = j;
                 try {
                     addSeniorManager(city_index, provider_login);
                 } catch (Throwable t) {
