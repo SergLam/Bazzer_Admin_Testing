@@ -26,8 +26,8 @@ import java.util.Iterator;
 
 public class MainClass {
 
-    public static final String BASE_URL_BOSS = "http://178.159.110.21:84";
-    public static final String BASE_URL_MANAGER = "http://178.159.110.21:83";
+    public static final String BASE_URL_BOSS = "https://admin.buzzer.online";
+    public static final String BASE_URL_MANAGER = "https://manager.buzzer.online";
 
     // Driver path
     private static final String CHROME_DRIVER_PATH_UNIX = "src/main/resources/chrome_driver";
@@ -54,17 +54,17 @@ public class MainClass {
     public static final String SENIOR_MANAGER_FILE_NAME = "SnrMgrOf";
     public static final String JUNIOR_MANAGER_FILE_PATH = "output/JnrMgrOf_";
     // SUPER-ADMIN LOGIN AND PASSWORD
-    public static final String ADMIN_LOGIN = "sergey";
-    public static final String ADMIN_PASSWORD = "sergey";
+    public static final String ADMIN_LOGIN = "admintest";
+    public static final String ADMIN_PASSWORD = "admintest";
 
 
     public static void main(String args[]) {
         JUnitCore junit = new JUnitCore();
-        // Admin functions test
+//         Admin functions test
 //        junit.run(AdminAddBrands.class);
 //        junit.run(AdminAddProfession.class);
 //
-//        junit.run(AdminAddProvider.class);
+        junit.run(AdminAddProvider.class);
 //
 //        junit.run(AdminAddNews.class);
 
@@ -77,7 +77,7 @@ public class MainClass {
 //        junit.run(ProviderAddNews.class);
 
         // Senior manager functions test
-        junit.run(SeniorManagerAddJuniorManager.class);
+//        junit.run(SeniorManagerAddJuniorManager.class);
 //        junit.run(SeniorManagerAddGoods.class);
 //        junit.run(SeniorManagerApproveUsers.class);
 //        junit.run(SeniorManagerApproveOrders.class);

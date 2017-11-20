@@ -66,7 +66,7 @@ public class AdminAddProvider {
         File f = new File(profile_photo_path.toAbsolutePath().toString());
         File[] files = f.listFiles();
 
-        int plus = 1020;
+        int plus = 10;
         for (int i = 1 + plus; i < files.length + plus; i++) {
             try {
                 provider_logins.add(addProvider(i, files[i-plus].getName()));
@@ -101,8 +101,10 @@ public class AdminAddProvider {
         driver.findElement(By.id("phone")).clear();
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
         driver.findElement(By.name("mail")).sendKeys(MainClass.PROVIDER_LOGIN + "@gmail.com");
-        driver.findElement(By.name("login")).sendKeys(MainClass.PROVIDER_LOGIN);
-        driver.findElement(By.name("password")).sendKeys(MainClass.PROVIDER_LOGIN);
+        driver.findElement(By.name("login")).clear();
+        driver.findElement(By.name("login")).sendKeys(MainClass.PROVIDER_LOGIN+String.valueOf(provider_number));
+        driver.findElement(By.name("password")).clear();
+        driver.findElement(By.name("password")).sendKeys(MainClass.PROVIDER_LOGIN+String.valueOf(provider_number));
         // Добавляем фото
         Path photo_path = Paths.get(MainClass.PROFILE_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
