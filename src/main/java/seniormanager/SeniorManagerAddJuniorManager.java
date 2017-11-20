@@ -69,7 +69,7 @@ public class SeniorManagerAddJuniorManager {
             for (int i = 0; i < list_of_excel_logins.size(); i++) {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
-                    try{
+                    try {
                         driver.get(MainClass.BASE_URL_MANAGER);
                         driver.findElement(By.name("login")).sendKeys(logins.get(j));
                         driver.findElement(By.name("password")).sendKeys(logins.get(j));
@@ -78,25 +78,26 @@ public class SeniorManagerAddJuniorManager {
 
                         // Добавляем младшего менеджера
                         goToAddJuniorManager();
-                        for (int o = 61; o < 62; o++) {
+                        for (int o = 64; o < 66; o++) {
                             // snrmgr0provider21
                             String sen_mag_name = logins.get(j);
                             System.out.println(sen_mag_name);
                             String[] arr = sen_mag_name.split(MainClass.PROVIDER_LOGIN);
                             System.out.println(Arrays.asList(arr));
-                            int jun_mag_num = Integer.parseInt(arr[0].substring(arr[0].length() - 1))+Integer.parseInt(arr[1])+o;
+                            int jun_mag_num = Integer.parseInt(arr[0].substring(arr[0].length() - 1)) + Integer.parseInt(arr[1]) + o;
                             System.out.println(jun_mag_num);
                             String login = addJuniorManager(jun_mag_num, logins.get(j));
+                            juniorManagers_logins.add(login);
                         }
 
                         // Сохраняем логины младших менеджеров в файл
-                        Path logins_path = Paths.get(MainClass.JUNIOR_MANAGER_FILE_PATH + logins.get(j)+MainClass.EXCEL_FILE_EXTENSION);
+                        Path logins_path = Paths.get(MainClass.JUNIOR_MANAGER_FILE_PATH + logins.get(j) + MainClass.EXCEL_FILE_EXTENSION);
                         MainClass.saveToExcelFile(logins_path.toString(), juniorManagers_logins);
                         juniorManagers_logins.clear();
 
                         // Выходим из менеджера
                         logoutSeniorManager();
-                    } catch (Throwable t){
+                    } catch (Throwable t) {
                         t.printStackTrace();
                     }
                 }
@@ -114,18 +115,18 @@ public class SeniorManagerAddJuniorManager {
         driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Заполняем форму
+        String login = MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number);
         driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
-        driver.findElement(By.name("login")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("password")).sendKeys(MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("login")).sendKeys(login);
+        driver.findElement(By.name("password")).sendKeys(login);
         driver.findElement(By.id("phone")).sendKeys("0" + String.valueOf(new Random().nextInt((999999999 - 100000000) + 1) + 100000000));
-        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
-        driver.findElement(By.name("work_time")).sendKeys("Время работы " + MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login);
+        driver.findElement(By.name("information")).sendKeys("Инфонмация о младшем менеджере " + login);
+        driver.findElement(By.name("work_time")).sendKeys("Время работы " + login);
         // Отправляем форму
         driver.findElement(By.tagName("form")).submit();
         // Ждем
         driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-        String juniormanager_login = MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login;
-        return juniormanager_login;
+        return login;
     }
 
     private void goToAddJuniorManager() {
