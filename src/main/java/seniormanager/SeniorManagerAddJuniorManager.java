@@ -78,14 +78,13 @@ public class SeniorManagerAddJuniorManager {
 
                         // Добавляем младшего менеджера
                         goToAddJuniorManager();
-                        for (int o = 64; o < 66; o++) {
-                            // snrmgr0provider21
+                        for (int o = 74; o < 76; o++) {
                             String sen_mag_name = logins.get(j);
-                            System.out.println(sen_mag_name);
+
                             String[] arr = sen_mag_name.split(MainClass.PROVIDER_LOGIN);
-                            System.out.println(Arrays.asList(arr));
-                            int jun_mag_num = Integer.parseInt(arr[0].substring(arr[0].length() - 1)) + Integer.parseInt(arr[1]) + o;
-                            System.out.println(jun_mag_num);
+
+                            int jun_mag_num = Integer.parseInt(arr[0].substring(arr[0].length() - 1)) + Integer.parseInt(arr[1]) + o + i + j;
+
                             String login = addJuniorManager(jun_mag_num, logins.get(j));
                             juniorManagers_logins.add(login);
                         }
@@ -115,7 +114,7 @@ public class SeniorManagerAddJuniorManager {
         driver.findElement(By.xpath("/html/body/div[6]/a/button")).click();
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         // Заполняем форму
-        String login = MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number);
+        String login = MainClass.JUNIOR_MANAGER_LOGIN + String.valueOf(number) + snr_mg_login;
         driver.findElement(By.name("name")).sendKeys("Младший менеджер" + String.valueOf(number));
         driver.findElement(By.name("login")).sendKeys(login);
         driver.findElement(By.name("password")).sendKeys(login);
