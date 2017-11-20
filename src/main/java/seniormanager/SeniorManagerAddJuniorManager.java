@@ -13,9 +13,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -76,19 +78,15 @@ public class SeniorManagerAddJuniorManager {
 
                         // Добавляем младшего менеджера
                         goToAddJuniorManager();
-                        for (int o = 58; o < 60; o++) {
-                            String login = addJuniorManager(o, logins.get(j));
-                            try {
-                                // Проверяем, нет ли сообщения о том, что логин существует
-                                WebElement login_exists = driver.findElement(By.xpath("/html/body/div[6]/p"));
-                                if(login_exists.isDisplayed()){
-
-                                } else {
-                                    juniorManagers_logins.add(login);
-                                }
-                            } catch (Throwable t){
-                                t.printStackTrace();
-                            }
+                        for (int o = 61; o < 62; o++) {
+                            // snrmgr0provider21
+                            String sen_mag_name = logins.get(j);
+                            System.out.println(sen_mag_name);
+                            String[] arr = sen_mag_name.split(MainClass.PROVIDER_LOGIN);
+                            System.out.println(Arrays.asList(arr));
+                            int jun_mag_num = Integer.parseInt(arr[0].substring(arr[0].length() - 1))+Integer.parseInt(arr[1])+o;
+                            System.out.println(jun_mag_num);
+                            String login = addJuniorManager(jun_mag_num, logins.get(j));
                         }
 
                         // Сохраняем логины младших менеджеров в файл

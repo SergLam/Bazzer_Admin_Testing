@@ -61,7 +61,7 @@ public class MainClass {
     public static void main(String args[]) {
         JUnitCore junit = new JUnitCore();
 //         Admin functions test
-        junit.run(AdminAddBrands.class);
+//        junit.run(AdminAddBrands.class);
 //        junit.run(AdminAddProfession.class);
 //
 //        junit.run(AdminAddProvider.class);
@@ -72,12 +72,12 @@ public class MainClass {
         // Provider functions test
 //        junit.run(ProviderActivateTrademarks.class);
 //        junit.run(ProviderAddSeniorManager.class);
-        junit.run(ProviderActivateSnrMgrTrademarks.class);
+//        junit.run(ProviderActivateSnrMgrTrademarks.class);
 //
 //        junit.run(ProviderAddNews.class);
 
         // Senior manager functions test
-//        junit.run(SeniorManagerAddJuniorManager.class);
+        junit.run(SeniorManagerAddJuniorManager.class);
 //        junit.run(SeniorManagerAddGoods.class);
 //        junit.run(SeniorManagerApproveUsers.class);
 //        junit.run(SeniorManagerApproveOrders.class);
