@@ -66,7 +66,7 @@ public class SeniorManagerAddJuniorManager {
         readExcelFilesWithManagersLogins();
 
         if (list_of_excel_logins.size() > 0) {
-            for (int i = 0; i < list_of_excel_logins.size(); i++) {
+            for (int i = 3; i < list_of_excel_logins.size(); i++) {
                 ArrayList<String> logins = list_of_excel_logins.get(i);
                 for (int j = 0; j < logins.size(); j++) {
                     try {
@@ -83,7 +83,7 @@ public class SeniorManagerAddJuniorManager {
 
                             String[] arr = sen_mag_name.split(MainClass.PROVIDER_LOGIN);
 
-                            int jun_mag_num = Integer.parseInt(arr[0].substring(arr[0].length() - 1)) + Integer.parseInt(arr[1]) + o + i + j;
+                            int jun_mag_num = Integer.parseInt(arr[0].substring(arr[0].length() - 1)) + Integer.parseInt(arr[1]) + new Random().nextInt(10000000);
 
                             String login = addJuniorManager(jun_mag_num, logins.get(j));
                             juniorManagers_logins.add(login);

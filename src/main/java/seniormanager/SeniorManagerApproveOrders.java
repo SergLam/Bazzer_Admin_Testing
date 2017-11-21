@@ -4,6 +4,7 @@ import main.MainClass;
 import model.TableOrderSearch;
 import org.junit.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -81,8 +82,8 @@ public class SeniorManagerApproveOrders {
 
                         // Выходим из менеджера
                         logoutSeniorManager();
-                    } catch (Throwable t){
-                        t.printStackTrace();
+                    } catch (NoSuchElementException e){
+                        e.printStackTrace();
                     }
                 }
             }
@@ -110,21 +111,25 @@ public class SeniorManagerApproveOrders {
         result.isUnaproved = false;
 
         // Find table on web-page
-        WebElement table = driver.findElement(By.tagName("table"));
-        List<WebElement> rows_table = table.findElements(By.tagName("tr"));
-        // Calculate table rows count
-        int rows_count = rows_table.size();  // -1 cause it title row
-        // Iterate through table and search green colored rows
-        for (int i = 1; i < rows_count; i++) {
-            //System.out.println(rows_table.get(i).getAttribute("style"));
-            if (rows_table.get(i).getAttribute("style").equals("background-color: rgb(204, 255, 102);")) {
-                result.isUnaproved = true;
-                List<WebElement> cells = rows_table.get(i).findElements(By.tagName("a"));
-                WebElement button_details = cells.get(0);
-                result.details_button = button_details;
+        try {
+            WebElement table = driver.findElement(By.tagName("table"));
+            List<WebElement> rows_table = table.findElements(By.tagName("tr"));
+            // Calculate table rows count
+            int rows_count = rows_table.size();  // -1 cause it title row
+            // Iterate through table and search green colored rows
+            for (int i = 1; i < rows_count; i++) {
+                //System.out.println(rows_table.get(i).getAttribute("style"));
+                if (rows_table.get(i).getAttribute("style").equals("background-color: rgb(204, 255, 102);")) {
+                    result.isUnaproved = true;
+                    List<WebElement> cells = rows_table.get(i).findElements(By.tagName("a"));
+                    WebElement button_details = cells.get(0);
+                    result.details_button = button_details;
+                }
             }
+        } catch (Throwable t){
+            result.isUnaproved = false;
+            t.printStackTrace();
         }
-
         return result;
     }
 
