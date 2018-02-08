@@ -66,7 +66,7 @@ public class AdminAddBrands {
 
         goToTradeMarkPage();
 
-        for (int i = 1; i < 2/*brand_files.length*/; i++) {
+        for (int i = 1; i < brand_files.length; i++) {
             addTradeMarkAdmin(brand_files[i].getName());
         }
     }
@@ -92,8 +92,8 @@ public class AdminAddBrands {
 
         Path photo_path = Paths.get(MainClass.BRAND_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
-        //driver.findElement(By.tagName("form")).submit();
-        //driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+        driver.findElement(By.tagName("form")).submit();
+        driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
 
     }
 

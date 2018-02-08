@@ -74,14 +74,13 @@ public class ProviderAddNews {
             File[] files = f.listFiles();
 
             for (int j = 1; j < files.length; j++) {
-                addNewsProvider(j);
+                addNewsProvider(files[j].getName());
             }
-
             logoutProvider();
         }
     }
 
-    public void addNewsProvider(int i) {
+    public void addNewsProvider(String file_name) {
         //Scroll page to top
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,250)", "");
@@ -98,7 +97,7 @@ public class ProviderAddNews {
         driver.findElement(By.name("title")).sendKeys("Новость " + String.valueOf(rand));
         driver.findElement(By.name("description")).sendKeys("Описание новости Selenium " + String.valueOf(rand));
         // Set photo path
-        Path photo_path = Paths.get(MainClass.NEWS_PHOTO_PATH + String.valueOf(i) + ".jpg");
+        Path photo_path = Paths.get(MainClass.NEWS_PHOTO_PATH + file_name);
         driver.findElement(By.name("file")).sendKeys(photo_path.toAbsolutePath().toString());
 
         driver.findElement(By.tagName("form")).submit();

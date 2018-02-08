@@ -26,7 +26,8 @@ public class ProviderAddSeniorManager {
     private static ArrayList<String> providers_login = getProvidersLogins();
     private static ArrayList<String> senior_managers_logins = new ArrayList<>();
     // Список основных городов
-    String[] main_cities = {"Черновцы", "Чернигов", "Черкассы", "Хмельницкий", "Херсон", "Харьков", "Тернополь",
+    String[] main_cities = {"Харьков", "Киев"};
+    String[] main_cities1 = {"Черновцы", "Чернигов", "Черкассы", "Хмельницкий", "Херсон", "Харьков", "Тернополь",
             "Сумы", "Ровно", "Полтава", "Одесса", "Львов", "Кировоград", "Киев", "Ивано-Франковск",
             "Запорожье", "Ужгород", "Житомир", "Днепропетровск", "Луцк", "Винница"};
 
@@ -87,6 +88,7 @@ public class ProviderAddSeniorManager {
                     if (senior_managers_logins.size() > 0 && j > main_cities.length - 3) {
                         Path logins_path = Paths.get(MainClass.SENIOR_MANAGER_FILE_PATH + provider_login + MainClass.EXCEL_FILE_EXTENSION);
                         MainClass.saveToExcelFile(logins_path.toString(), senior_managers_logins);
+                        senior_managers_logins.clear();
                     }
                 }
             }

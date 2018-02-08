@@ -1,20 +1,11 @@
 package main;
 
-import admin.AdminAddBrands;
-import admin.AdminAddNews;
-import admin.AdminAddProfession;
-import admin.AdminAddProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import org.junit.runner.JUnitCore;
-import provider.ProviderActivateSnrMgrTrademarks;
-import provider.ProviderActivateTrademarks;
-import provider.ProviderAddNews;
-import provider.ProviderAddSeniorManager;
-import seniormanager.*;
+import seniormanager.SeniorManagerAddEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,8 +17,12 @@ import java.util.Iterator;
 
 public class MainClass {
 
-    public static final String BASE_URL_BOSS = "https://admin.buzzer.online";
-    public static final String BASE_URL_MANAGER = "https://manager.buzzer.online";
+    public static final String BASE_URL_BOSS = "http://178.159.110.21:84";
+    public static final String BASE_URL_MANAGER = "http://178.159.110.21:83";
+
+    // SUPER-ADMIN LOGIN AND PASSWORD
+    public static final String ADMIN_LOGIN = "admin0";
+    public static final String ADMIN_PASSWORD = "123456";
 
     // Driver path
     private static final String CHROME_DRIVER_PATH_UNIX = "src/main/resources/chrome_driver";
@@ -53,9 +48,7 @@ public class MainClass {
     public static final String SENIOR_MANAGER_FILE_PATH = "output/SnrMgrOf";
     public static final String SENIOR_MANAGER_FILE_NAME = "SnrMgrOf";
     public static final String JUNIOR_MANAGER_FILE_PATH = "output/JnrMgrOf_";
-    // SUPER-ADMIN LOGIN AND PASSWORD
-    public static final String ADMIN_LOGIN = "admintest";
-    public static final String ADMIN_PASSWORD = "admintest";
+
 
 
     public static void main(String args[]) {
@@ -73,15 +66,17 @@ public class MainClass {
 //        junit.run(ProviderActivateTrademarks.class);
 //        junit.run(ProviderAddSeniorManager.class);
 //        junit.run(ProviderActivateSnrMgrTrademarks.class);
-//
+
 //        junit.run(ProviderAddNews.class);
 
         // Senior manager functions test
 //        junit.run(SeniorManagerAddJuniorManager.class);
-        junit.run(SeniorManagerAddGoods.class);
-        junit.run(SeniorManagerApproveUsers.class);
-        junit.run(SeniorManagerApproveOrders.class);
-        junit.run(SeniorManagerAddNews.class);
+//        junit.run(SeniorManagerAddGoods.class);
+//        junit.run(SeniorManagerApproveUsers.class);
+//        junit.run(SeniorManagerApproveOrders.class);
+//        junit.run(SeniorManagerAddNews.class);
+//        junit.run(SeniorManagerAddAction.class);
+        junit.run(SeniorManagerAddEvent.class);
 
     }
 
